@@ -39,7 +39,7 @@ all :
 # Library) headers and libraries.  The following paths are the most
 # common places for these to be installed.  If compilation doesn't
 # work, correct these paths.
-INCFLAGS = -I/opt/local/include -I/usr/local/include
+INCFLAGS = -IQuaternions -I/opt/local/include -I/usr/local/include
 LIBFLAGS = -L/opt/local/lib -L/usr/local/lib
 ifdef GSL_HOME
 	INCFLAGS = -I${GSL_HOME}/include ${INCFLAGS}
@@ -59,11 +59,11 @@ OPT = -O3 -fopenmp -Wall -Wno-deprecated
 .PHONY : all cpp clean allclean realclean swig
 
 # If needed, we can also make object files to use in other C++ programs
-cpp : SWSHs.o
+cpp : SWSHs.o Quaternions/Quaternions.o
 
 # This is how to build those object files
-%.o : %.cpp %.hpp Errors.hpp
-	$(C++) $(OPT) -DCodeRevision=3 -c $(INCFLAGS) $< -o $@
+%.o : %.cpp %.hpp
+	$(C++) $(OPT) -c $(INCFLAGS) $< -o $@
 
 # The following are just handy targets for removing compiled stuff
 clean :
