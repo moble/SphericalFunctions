@@ -31,7 +31,8 @@ To get this code, run
 The `recursive` flag must be passed because this project uses
 [`Quaternions`](https://github.com/MOBle/Quaternions) as a git
 submodule, which also needs to be downloaded.  Note, however, that the
-GSL dependency in the `Quaternions` module is not needed.
+GSL dependency in the `Quaternions` module is not needed by this
+module.
 
 
 Compiling with other software
