@@ -82,41 +82,21 @@
     $action;
   } catch(int i) {
     if(i==0) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Not yet implemented.");
+      PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions: Index out of bounds.");
     } else if(i==1) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Index out of bounds.");
+      PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions: Infinitely many solutions.");
     } else if(i==2) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Infinitely many solutions.");
+      PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions: Not enough points to take a derivative.");
     } else if(i==3) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Input vector size mismatch.");
+      PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions: Vector size not understood.");
     } else if(i==4) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Cannot extrapolate quaternions.");
+      PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions: Vector size inconsistent with another vector's size.");
     } else if(i==5) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Matrix size mismatch.");
+      PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions: Cannot extrapolate quaternions.");
     } else if(i==6) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Matrix size is assumed to be 3x3 in this function.");
+      PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions: Failed call to GSL.");
     } else if(i==7) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Quaternion constructor's vector size not understood; should be 3 or 4.");
-    } else if(i==8) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Waveform is missing requested l,m component.");
-    } else if(i==9) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Bad file name.");
-    } else if(i==10) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Not enough points to take a derivative.");
-    } else if(i==11) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Empty intersection requested.");
-    } else if(i==12) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Failed system call.");
-    } else if(i==13) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Wrong FrameType for this operation.  Maybe you forgot to `SetFrameType`?");
-    } else if(i==14) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: GSL failed.");
-    } else if(i==15) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Bad Waveform information.");
-    } else if(i==16) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Bad switches; we should not have gotten here.");
-    } else if(i==17) {
-      PyErr_SetString(PyExc_RuntimeError, "GWFrames: Bad value.");
+      PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions: Unknown exception.");
     } else  {
       PyErr_SetString(PyExc_RuntimeError, "Unknown exception");
     }
