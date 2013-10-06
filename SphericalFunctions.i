@@ -139,13 +139,19 @@
 
 
 %pythoncode %{
-  import Quaternions;
+  try :
+    import Quaternions
+  except ImportError :
+    pass
 %}
 
 
 // This imports spinsfast.so, so we don't need to pull any tricks
 %pythoncode %{
-  import spinsfast;
+  try :
+    import spinsfast
+  except ImportError :
+    pass
   %}
 
 //////////////////////////////////////////////////////////////////////
