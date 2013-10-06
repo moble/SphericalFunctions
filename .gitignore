@@ -11,3 +11,13 @@
 *.lai
 *.la
 *.a
+
+
+# Custom for this project
+build/
+html/
+latex/
+xml/
+SphericalFunctions/
+SphericalFunctions_wrap.cpp
+SphericalFunctions.py

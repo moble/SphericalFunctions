@@ -48,10 +48,10 @@ from os import devnull, environ
 
 ## See if GSL_HOME is set; if so, use it
 if "GSL_HOME" in environ :
-    IncDirs = [environ["GSL_HOME"]+'/include', '/opt/local/include']
+    IncDirs = ['Quaternions', environ["GSL_HOME"]+'/include', '/opt/local/include']
     LibDirs = [environ["GSL_HOME"]+'/lib', '/opt/local/lib']
 else :
-    IncDirs = ['/opt/local/include']
+    IncDirs = ['Quaternions', '/opt/local/include']
     LibDirs = ['/opt/local/lib']
 
 ## Remove a compiler flag that doesn't belong there for C++
@@ -91,9 +91,12 @@ setup(name="SphericalFunctions",
       # py_modules = ['SphericalFunctions'],
       # scripts = ['Scripts/RunExtrapolations.py', 'Scripts/ConvertGWDatToH5.py'],
       ext_modules = [
-        Extension('_SphericalFunctions', ['SWSHs.cpp',
-                                          'SphericalFunctions.i'],
-                  depends = ['SWSHs.hpp'],
+        Extension('_SphericalFunctions',
+                  ['SWSHs.cpp',
+                   'Quaternions/Quaternions.cpp',
+                   'SphericalFunctions.i'],
+                  depends = ['SWSHs.hpp',
+                             'Quaternions/Quaternions.hpp'],
                   include_dirs=IncDirs,
                   library_dirs=LibDirs,
                   libraries=['gsl', 'gslcblas',],

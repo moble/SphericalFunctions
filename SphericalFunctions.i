@@ -134,7 +134,7 @@
   #include <iomanip>
   #include <complex>
   #include "Quaternions.hpp"
-  #include "SphericalFunctions.hpp"
+  #include "SWSHs.hpp"
 %}
 
 
@@ -183,7 +183,7 @@ namespace std {
 ////////////////////////////////////////////////////////////
 //// Import the various functions for spherical harmonics //
 ////////////////////////////////////////////////////////////
-%include "SphericalFunctions.hpp"
+%include "SWSHs.hpp"
 
 
 /// Add utility functions that are specific to python.  Note that

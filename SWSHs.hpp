@@ -6,14 +6,12 @@
 
 #include "Quaternions.hpp"
 
-#define IndexOutOfBounds 1
-#define SphericalFunctions_ellMax 32 // 16
-#define SphericalFunctions_epsilon 1.0e-14
+#define IndexOutOfBounds 0
 
 namespace SphericalFunctions {
 
-  const int ellMax = SphericalFunctions_ellMax;
-  const double epsilon = SphericalFunctions_epsilon;
+  const int ellMax = 32;
+  const double epsilon = 1.0e-14;
 
   /// Object for pre-computing and retrieving factorials
   class FactorialFunctor {
@@ -99,8 +97,8 @@ namespace SphericalFunctions {
     std::complex<double> Ra, Rb;
     double absRa, absRb, absRRatioSquared;
   public:
-    WignerDMatrix(const Quaternion& iR=Quaternion(1,0,0,0));
-    WignerDMatrix& SetRotation(const Quaternion& iR);
+    WignerDMatrix(const Quaternions::Quaternion& iR=Quaternions::Quaternion(1,0,0,0));
+    WignerDMatrix& SetRotation(const Quaternions::Quaternion& iR);
     std::complex<double> operator()(const int ell, const int mp, const int m) const;
   };
 
@@ -119,12 +117,12 @@ namespace SphericalFunctions {
     double sign;
   public:
     // / \@cond
-    SWSH(const int s, const Quaternion& iR=Quaternion(1,0,0,0))
+    SWSH(const int s, const Quaternions::Quaternion& iR=Quaternions::Quaternion(1,0,0,0))
       : D(iR), spin(s), sign(s%2==0 ? 1.0 : -1.0)
     { }
     // / \@endcond
-    inline SWSH& SetRotation(const Quaternion& iR) { D.SetRotation(iR); return *this; }
-    inline SWSH& SetAngles(const double vartheta, const double varphi) { D.SetRotation(Quaternion(vartheta, varphi)); return *this; }
+    inline SWSH& SetRotation(const Quaternions::Quaternion& iR) { D.SetRotation(iR); return *this; }
+    inline SWSH& SetAngles(const double vartheta, const double varphi) { D.SetRotation(Quaternions::Quaternion(vartheta, varphi)); return *this; }
     inline std::complex<double> operator()(const int ell, const int m) const {
       return sign * std::sqrt((2*ell+1)/(4*M_PI)) * D(ell, m, -spin);
     }
