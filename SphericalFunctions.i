@@ -3,7 +3,6 @@
 // Copyright (c) 2013, Michael Boyle
 // See LICENSE file for details
 
-
 %module SphericalFunctions
 
  // Quiet warnings about overloaded operators being ignored.
@@ -11,66 +10,19 @@
 %include <typemaps.i>
 %include <stl.i>
 
-// %{
-//   #include "/opt/local/Library/Frameworks/Python.framework/Versions/2.7/lib/python2.7/site-packages/numpy/core/include/numpy/arrayobject.h"
-//   #include <vector>
-// %}
+#ifndef SWIGIMPORTED
+// Use numpy below
+%include <numpy.i>
+%init %{
+  import_array();
+%}
+%pythoncode %{
+  import numpy;
+%}
+#endif
 
-// %init %{
-//   import_array();
-// %}
-
-// %typemap(out) std::vector<int> {
-//   npy_intp result_size = $1.size();
-//   npy_intp dims[1] = { result_size };
-//   PyArrayObject* npy_arr = (PyArrayObject*)PyArray_SimpleNew(1, dims, NPY_INT);
-//   int* dat = (int*) PyArray_DATA(npy_arr);
-//   for (size_t i = 0; i < result_size; ++i) { dat[i] = $1[i]; }
-//   $result = PyArray_Return(npy_arr);
-// }
-// %typemap(out) std::vector<int>& {
-//   npy_intp result_size = $1->size();
-//   npy_intp dims[1] = { result_size };
-//   PyArrayObject* npy_arr = (PyArrayObject*)PyArray_SimpleNew(1, dims, NPY_INT);
-//   int* dat = (int*) PyArray_DATA(npy_arr);
-//   for (size_t i = 0; i < result_size; ++i) { dat[i] = (*$1)[i]; }
-//   $result = PyArray_Return(npy_arr);
-// }
-// %typemap(out) std::vector<std::vector<int> >& {
-//   npy_intp result_size = $1->size();
-//   npy_intp result_size2 = (result_size>0 ? (*$1)[0].size() : 0);
-//   npy_intp dims[2] = { result_size, result_size2 };
-//   PyArrayObject* npy_arr = (PyArrayObject*)PyArray_SimpleNew(2, dims, NPY_INT);
-//   int* dat = (int*) PyArray_DATA(npy_arr);
-//   for (size_t i = 0; i < result_size; ++i) { for (size_t j = 0; j < result_size2; ++j) { dat[i*result_size2+j] = (*$1)[i][j]; } }
-//   $result = PyArray_Return(npy_arr);
-// }
-
-// %typemap(out) std::vector<double> {
-//   npy_intp result_size = $1.size();
-//   npy_intp dims[1] = { result_size };
-//   PyArrayObject* npy_arr = (PyArrayObject*)PyArray_SimpleNew(1, dims, NPY_DOUBLE);
-//   double* dat = (double*) PyArray_DATA(npy_arr);
-//   for (size_t i = 0; i < result_size; ++i) { dat[i] = $1[i]; }
-//   $result = PyArray_Return(npy_arr);
-// }
-// %typemap(out) std::vector<double>& {
-//   npy_intp result_size = $1->size();
-//   npy_intp dims[1] = { result_size };
-//   PyArrayObject* npy_arr = (PyArrayObject*)PyArray_SimpleNew(1, dims, NPY_DOUBLE);
-//   double* dat = (double*) PyArray_DATA(npy_arr);
-//   for (size_t i = 0; i < result_size; ++i) { dat[i] = (*$1)[i]; }
-//   $result = PyArray_Return(npy_arr);
-// }
-// %typemap(out) std::vector<std::vector<double> >& {
-//   npy_intp result_size = $1->size();
-//   npy_intp result_size2 = (result_size>0 ? (*$1)[0].size() : 0);
-//   npy_intp dims[2] = { result_size, result_size2 };
-//   PyArrayObject* npy_arr = (PyArrayObject*)PyArray_SimpleNew(2, dims, NPY_DOUBLE);
-//   double* dat = (double*) PyArray_DATA(npy_arr);
-//   for (size_t i = 0; i < result_size; ++i) { for (size_t j = 0; j < result_size2; ++j) { dat[i*result_size2+j] = (*$1)[i][j]; } }
-//   $result = PyArray_Return(npy_arr);
-// }
+%import "Quaternions/Quaternions.i"
+%import "Quaternions/Quaternions_typemaps.i"
 
 %include "docs/SphericalFunctions_Doc.i"
 
@@ -119,41 +71,30 @@
 
 
 %pythoncode %{
-  try :
-    import Quaternions
-  except ImportError :
-    pass
-%}
+  ## We must be able to import numpy
+  import numpy
 
+  ## We must be able to import Quaternions
+  import Quaternions
 
-// This imports spinsfast.so, so we don't need to pull any tricks
-%pythoncode %{
+  ## We might be able to get away without spinsfast
   try :
     import spinsfast
   except ImportError :
     pass
-  %}
+%}
 
 //////////////////////////////////////////////////////////////////////
 //// The following translates between c++ and python types nicely ////
 //////////////////////////////////////////////////////////////////////
-//// This lets me use numpy.array in the code below
-%pythoncode %{
-  import numpy;
-  %}
 //// Make sure std::strings are dealt with appropriately
 %include <std_string.i>
 //// Make sure std::complex numbers are dealt with appropriately
 %include <std_complex.i>
-// namespace std {
-//   %template(complexd) complex<double>; // Don't use this line!!!
-// };
 //// Make sure std::vectors are dealt with appropriately
 %include <std_vector.i>
-namespace Quaternions {
-  class Quaternion;
- };
 namespace std {
+  // %template(complexd) complex<double>; // Don't use this line!!!
   %template(vectori) vector<int>;
   %template(vectorvectori) vector<vector<int> >;
   %template(vectord) vector<double>;
