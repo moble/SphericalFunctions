@@ -85,7 +85,8 @@ namespace SphericalFunctions {
 	throw(IndexOutOfBounds);
       }
       #endif
-      return CoefficientTable[int(ell*(ell*(1.3333333333333333*ell + 2) + 1.6666666666666667) + mp*(2*ell + 1) + m + 0.5)];
+      return CoefficientTable[(2*ell*(ell*(4*ell + 6) + 5) + 6*mp*(2*ell + 1) + 6*m + 3)/6];
+      // return CoefficientTable[int(ell*(ell*(1.3333333333333333*ell + 2) + 1.6666666666666667) + mp*(2*ell + 1) + m + 0.5)];
     }
   };
 
