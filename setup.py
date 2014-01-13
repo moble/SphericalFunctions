@@ -51,11 +51,6 @@ from numpy import get_include
 IncDirs = ['Quaternions', get_include()]
 LibDirs = []
 
-## See if GSL_HOME is set; if so, use it
-if "GSL_HOME" in environ :
-    IncDirs += [environ["GSL_HOME"]+'/include']
-    LibDirs += [environ["GSL_HOME"]+'/lib']
-
 # If /opt/local directories exist, use them
 from os.path import isdir
 if isdir('/opt/local/include'):
@@ -90,7 +85,7 @@ except IOError :
 ## This does the actual work
 setup(name="SphericalFunctions",
       # version=PackageVersion,
-      description='Spin-weighted spherical harmonic library for C++, with python bindings via SWIG',
+      description='Library implementing Wigner D matrices and spin-weighted spherical harmonics in C++, with python bindings via SWIG',
       #long_description=""" """,
       author='Michael Boyle',
       author_email='boyle@astro.cornell.edu',
@@ -101,14 +96,18 @@ setup(name="SphericalFunctions",
       # scripts = ['Scripts/RunExtrapolations.py', 'Scripts/ConvertGWDatToH5.py'],
       ext_modules = [
         Extension('_SphericalFunctions',
-                  ['SWSHs.cpp',
-                   'Quaternions/Quaternions.cpp',
+                  ['Quaternions/Quaternions.cpp',
+                   'Combinatorics.cpp',
+                   'WignerDMatrices.cpp',
+                   'SWSHs.cpp',
                    'SphericalFunctions.i'],
-                  depends = ['SWSHs.hpp',
-                             'Quaternions/Quaternions.hpp'],
+                  depends = ['Quaternions/Quaternions.hpp',
+                             'Combinatorics.hpp',
+                             'WignerDMatrices.hpp',
+                             'SWSHs.hpp'],
                   include_dirs=IncDirs,
                   library_dirs=LibDirs,
-                  libraries=['gsl', 'gslcblas',],
+                  #libraries=['gsl', 'gslcblas',],
                   #define_macros = [('CodeRevision', CodeRevision)],
                   language='c++',
                   swig_opts=['-globals', 'constants', '-c++'],
@@ -116,8 +115,8 @@ setup(name="SphericalFunctions",
                   # extra_link_args=['-lgomp', '-fPIC', '-Wl,-undefined,error'], # `-undefined,error` tells the linker to fail on undefined symbols
                   extra_compile_args=['-Wno-deprecated']
                   # extra_compile_args=['-fopenmp', '-ffast-math'] # DON'T USE fast-math!!!  It makes it impossible to detect NANs
-                  )
-        ],
+              )
+      ],
       # classifiers = ,
       # distclass = ,
       # script_name = ,

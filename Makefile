@@ -60,7 +60,7 @@ OPT = -O3 -fopenmp -Wall -Wno-deprecated
 .PHONY : all cpp clean allclean realclean swig
 
 # If needed, we can also make object files to use in other C++ programs
-cpp : SWSHs.o Quaternions/Quaternions.o
+cpp : Quaternions/Quaternions.o Combinatorics.o WignerDMatrices.o SWSHs.o
 
 # This is how to build those object files
 %.o : %.cpp %.hpp

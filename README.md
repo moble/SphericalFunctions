@@ -68,6 +68,7 @@ function name.  For example:
 
     SphericalHarmonics.WignerDMatrix?
 
-In plain python, the same thing can be achieved by entering
-`help(SphericalHarmonics.Squad)`.  But if you're using plain python
-interactively, you should really give ipython a try.
+In plain python, essentially the same thing can be achieved by
+entering `help(SphericalHarmonics.WignerDMatrix)`.  But if you're
+using plain python interactively, you should really give ipython a
+try.
