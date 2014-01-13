@@ -46,13 +46,22 @@ from distutils.core import setup, Extension
 from subprocess import check_output, CalledProcessError
 from os import devnull, environ
 
+# Add directories for numpy and other inclusions
+from numpy import get_include
+IncDirs = ['Quaternions', get_include()]
+LibDirs = []
+
 ## See if GSL_HOME is set; if so, use it
 if "GSL_HOME" in environ :
-    IncDirs = ['Quaternions', environ["GSL_HOME"]+'/include', '/opt/local/include']
-    LibDirs = [environ["GSL_HOME"]+'/lib', '/opt/local/lib']
-else :
-    IncDirs = ['Quaternions', '/opt/local/include']
-    LibDirs = ['/opt/local/lib']
+    IncDirs += [environ["GSL_HOME"]+'/include']
+    LibDirs += [environ["GSL_HOME"]+'/lib']
+
+# If /opt/local directories exist, use them
+from os.path import isdir
+if isdir('/opt/local/include'):
+    IncDirs += ['/opt/local/include']
+if isdir('/opt/local/lib'):
+    LibDirs += ['/opt/local/lib']
 
 ## Remove a compiler flag that doesn't belong there for C++
 import distutils.sysconfig as ds

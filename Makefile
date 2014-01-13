@@ -9,11 +9,12 @@
 
 
 # By default, just call the python build process
-all :
+all : Quaternions
 	python setup.py install --user
 
 
-
+Quaternions :
+	$(MAKE) -C Quaternions
 
 
 

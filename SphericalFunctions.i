@@ -12,7 +12,10 @@
 
 #ifndef SWIGIMPORTED
 // Use numpy below
-%include <numpy.i>
+%{
+  #define SWIG_FILE_WITH_INIT
+  %}
+%include "Quaternions/numpy.i"
 %init %{
   import_array();
 %}
@@ -97,8 +100,6 @@ namespace std {
   // %template(complexd) complex<double>; // Don't use this line!!!
   %template(vectori) vector<int>;
   %template(vectorvectori) vector<vector<int> >;
-  %template(vectord) vector<double>;
-  %template(vectorvectord) vector<vector<double> >;
   %template(vectorc) vector<std::complex<double> >;
   %template(vectorvectorc) vector<vector<std::complex<double> > >;
   %template(vectorq) vector<Quaternions::Quaternion>;
