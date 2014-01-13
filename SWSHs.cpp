@@ -93,7 +93,7 @@ std::vector<double> WignerCoefficientCalculator() {
   ///   >>> horner(summation((2*ell+1)**2, (ell, 0, ell-1)) + (2*ell+1)*(ell+mp) + ell + m)
   ///   ell*(ell*(4*ell/3 + 2) + 5/3) + mp*(2*ell + 1) + m
   /// of the array.
-  std::vector<double> CoefficientTable(int(ellMax*(ellMax*(1.3333333333333333*ellMax + 4) + 3.6666666666666667) + 1 + 0.5));
+  std::vector<double> CoefficientTable(ellMax*(ellMax*(4*ellMax + 12) + 11)/3 + 1);
   FactorialFunctor Factorial;
   unsigned int i=0;
   for(int ell=0; ell<=ellMax; ++ell) {
