@@ -69,6 +69,8 @@
   #include <iomanip>
   #include <complex>
   #include "Quaternions.hpp"
+  #include "Combinatorics.hpp"
+  #include "WignerDMatrices.hpp"
   #include "SWSHs.hpp"
 %}
 
@@ -111,6 +113,8 @@ namespace std {
 ////////////////////////////////////////////////////////////
 //// Import the various functions for spherical harmonics //
 ////////////////////////////////////////////////////////////
+%include "Combinatorics.hpp"
+%include "WignerDMatrices.hpp"
 %include "SWSHs.hpp"
 
 
