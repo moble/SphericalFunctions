@@ -57,13 +57,13 @@ OPT = -O3 -fopenmp -Wall -Wno-deprecated
 #############################################################################
 
 # Tell 'make' not to look for files with the following names
-.PHONY : all cpp clean allclean realclean swig
+.PHONY : all cpp clean allclean realclean swig Quaternions
 
 # If needed, we can also make object files to use in other C++ programs
 cpp : Quaternions/Quaternions.o Combinatorics.o WignerDMatrices.o SWSHs.o
 
 # This is how to build those object files
-%.o : %.cpp %.hpp
+%.o : %.cpp %.hpp Errors.hpp
 	$(C++) $(OPT) -c $(INCFLAGS) $< -o $@
 
 # The following are just handy targets for removing compiled stuff

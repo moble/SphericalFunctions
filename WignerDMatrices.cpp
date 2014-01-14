@@ -2,12 +2,7 @@
 // See LICENSE file for details
 
 #include "WignerDMatrices.hpp"
-
-#define InfinitelyManySolutions 1
-#define NotEnoughPointsForDerivative 2
-#define VectorSizeNotUnderstood 3
-#define VectorSizeMismatch 4
-// #define  7
+#include "Errors.hpp"
 
 using namespace SphericalFunctions;
 using Quaternions::Quaternion;

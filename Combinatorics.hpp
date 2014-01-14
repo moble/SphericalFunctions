@@ -8,9 +8,8 @@
 
 #ifdef DEBUG
 #include <iostream>
+#include "Errors.hpp"
 #endif
-
-#define IndexOutOfBounds 0
 
 namespace SphericalFunctions {
 
