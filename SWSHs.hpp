@@ -12,7 +12,7 @@ namespace SphericalFunctions {
   class SWSH {
     /// Note that this object is a functor taking a quaternion
     /// argument.  Ordinarily, we think of this quaternion as being
-    /// the rotor taking the unit $z$ vector into a point
+    /// the rotor taking the unit \f$z\f$ vector into a point
     /// \f$(\vartheta, \varphi)\f$, which gives us the usual form of
     /// SWSHs.  However, more general arguments are possible; no
     /// checking is done to ensure that the argument has the simple
@@ -26,7 +26,7 @@ namespace SphericalFunctions {
     SWSH(const int s, const Quaternions::Quaternion& iR=Quaternions::Quaternion(1,0,0,0))
       : D(iR), spin(s), sign(s%2==0 ? 1.0 : -1.0)
     { }
-    // / \@endcond
+    // / \endcond
     inline SWSH& SetRotation(const Quaternions::Quaternion& iR) { D.SetRotation(iR); return *this; }
     inline SWSH& SetAngles(const double vartheta, const double varphi) { D.SetRotation(Quaternions::Quaternion(vartheta, varphi)); return *this; }
     inline std::complex<double> operator()(const int ell, const int m) const {

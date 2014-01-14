@@ -102,6 +102,7 @@
 //// These will be needed by the c++ wrapper ////
 /////////////////////////////////////////////////
 %{
+  #include <vector>
   #include <iostream>
   #include <string>
   #include <sstream>

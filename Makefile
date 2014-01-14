@@ -57,7 +57,11 @@ OPT = -O3 -fopenmp -Wall -Wno-deprecated
 #############################################################################
 
 # Tell 'make' not to look for files with the following names
-.PHONY : all cpp clean allclean realclean swig Quaternions
+.PHONY : all cpp clean allclean realclean swig Quaternions doc
+
+# This rebuilds the documentation, assuming doxygen is working
+doc :
+	make -C docs
 
 # If needed, we can also make object files to use in other C++ programs
 cpp : Quaternions/Quaternions.o Combinatorics.o WignerDMatrices.o SWSHs.o
