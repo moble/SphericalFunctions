@@ -32,6 +32,7 @@ namespace SphericalFunctions {
     inline std::complex<double> operator()(const int ell, const int m) const {
       return sign * std::sqrt((2*ell+1)/(4*M_PI)) * D(ell, m, -spin);
     }
+    std::complex<double> Evaluate(const std::vector<std::complex<double> >& Modes) const;
   };
 
 } // namespace SphericalFunctions
