@@ -1,42 +1,44 @@
-%feature("docstring") SphericalFunctions::BinomialCoefficientFunctor::operator() """
-
-
-  Parameters
-  ----------
-    const unsigned int n
-    const unsigned int k
+%feature("docstring") SphericalFunctions::WignerCoefficientFunctor """
+class SphericalFunctions::WignerCoefficientFunctor
+==================================================
+  Object for pre-computing and retrieving coefficients for the Wigner D
+  matrices.
   
-  Returns
-  -------
-    double
+  Member variables
+  ----------------
+    const vector<double> CoefficientTable
   
 """
 
-%feature("docstring") SphericalFunctions::SWSH::SetRotation """
-
-
-  Parameters
-  ----------
-    const Quaternions::Quaternion& iR
+%feature("docstring") SphericalFunctions::SWSH """
+class SphericalFunctions::SWSH
+==============================
+  Object for computing values of the spin-weighted spherical harmonics (SWSHs)
   
-  Returns
-  -------
-    SWSH&
+  Member variables
+  ----------------
+    WignerDMatrix D
+
+            Note that this object is a functor taking a quaternion argument.
+      Ordinarily, we think of this quaternion as being the rotor taking the
+      unit $z$ vector into a point $(\\vartheta, \\varphi)$, which gives us the
+      usual form of SWSHs. However, more general arguments are possible; no
+      checking is done to ensure that the argument has the simple form of a
+      minimal rotation to the spherical coordinate.    int spin
+    double sign
   
 """
 
-%feature("docstring") SphericalFunctions::WignerCoefficientFunctor::operator() """
+%feature("docstring") SphericalFunctions::FactorialFunctor::FactorialFunctor """
 
 
   Parameters
   ----------
-    const int ell
-    const int mp
-    const int m
+    (none)
   
   Returns
   -------
-    double
+    FactorialFunctor
   
 """
 
@@ -53,41 +55,21 @@
   
 """
 
-%feature("docstring") SphericalFunctions::LadderOperatorFactorFunctor """
-class SphericalFunctions::LadderOperatorFactorFunctor
-=====================================================
-  Object for pre-computing and retrieving values of the ladder operators.
-  
-  Member variables
-  ----------------
-    const vector<double> FactorTable
-  
+%feature("docstring") SphericalFunctions """
+namespace SphericalFunctions
+============================
 """
 
-%feature("docstring") SphericalFunctions::SWSH::operator() """
-
-
+%feature("docstring") WignerDMatrix::SetRotation """
+Reset the rotor for this object to the given value.
+===================================================
   Parameters
   ----------
-    const int ell
-    const int m
+    const Quaternions::Quaternion& iR
   
   Returns
   -------
-    complex<double>
-  
-"""
-
-%feature("docstring") SphericalFunctions::WignerCoefficientFunctor::WignerCoefficientFunctor """
-
-
-  Parameters
-  ----------
-    (none)
-  
-  Returns
-  -------
-    WignerCoefficientFunctor
+    WignerDMatrix&
   
 """
 
@@ -110,29 +92,61 @@ Class to create an object returning the factorial of an argument.
   
 """
 
-%feature("docstring") SphericalFunctions::BinomialCoefficientFunctor::BinomialCoefficientFunctor """
-
-
-  Parameters
-  ----------
-    (none)
+%feature("docstring") SphericalFunctions::WignerDMatrix """
+class SphericalFunctions::WignerDMatrix
+=======================================
+  Object for computing the Wigner D matrices as functions of quaternion rotors.
   
-  Returns
-  -------
-    BinomialCoefficientFunctor
+  Member variables
+  ----------------
+    BinomialCoefficientFunctor BinomialCoefficient
+    WignerCoefficientFunctor WignerCoefficient
+    complex<double> Ra
+    complex<double> Rb
+    double absRa
+    double absRb
+    double absRRatioSquared
   
 """
 
-%feature("docstring") SphericalFunctions::FactorialFunctor::operator() """
+%feature("docstring") SphericalFunctions::LadderOperatorFactorFunctor::operator() """
 
 
   Parameters
   ----------
-    const unsigned int i
+    const int ell
+    const int m
   
   Returns
   -------
     double
+  
+"""
+
+%feature("docstring") SphericalFunctions::SWSH::SetRotation """
+
+
+  Parameters
+  ----------
+    const Quaternions::Quaternion& iR
+  
+  Returns
+  -------
+    SWSH&
+  
+"""
+
+%feature("docstring") SphericalFunctions::SWSH::SetAngles """
+
+
+  Parameters
+  ----------
+    const double vartheta
+    const double varphi
+  
+  Returns
+  -------
+    SWSH&
   
 """
 
@@ -159,42 +173,6 @@ Class to create an object returning the factorial of an argument.
   
 """
 
-%feature("docstring") SphericalFunctions::WignerCoefficientFunctor """
-class SphericalFunctions::WignerCoefficientFunctor
-==================================================
-  Object for pre-computing and retrieving coefficients for the Wigner D
-  matrices.
-  
-  Member variables
-  ----------------
-    const vector<double> CoefficientTable
-  
-"""
-
-%feature("docstring") SphericalFunctions::BinomialCoefficientFunctor """
-class SphericalFunctions::BinomialCoefficientFunctor
-====================================================
-  Object for pre-computing and retrieving binomials.
-  
-  Member variables
-  ----------------
-    const vector<double> BinomialCoefficientTable
-  
-"""
-
-%feature("docstring") WignerDMatrix::SetRotation """
-Reset the rotor for this object to the given value.
-===================================================
-  Parameters
-  ----------
-    const Quaternions::Quaternion& iR
-  
-  Returns
-  -------
-    WignerDMatrix&
-  
-"""
-
 %feature("docstring") WignerDMatrix::operator() """
 Evaluate the D matrix element for the given (ell, mp, m) indices.
 =================================================================
@@ -207,6 +185,175 @@ Evaluate the D matrix element for the given (ell, mp, m) indices.
   Returns
   -------
     complex<double>
+  
+"""
+
+%feature("docstring") SphericalFunctions::BinomialCoefficientFunctor::operator() """
+
+
+  Parameters
+  ----------
+    const unsigned int n
+    const unsigned int k
+  
+  Returns
+  -------
+    double
+  
+"""
+
+%feature("docstring") SphericalFunctions::WignerCoefficientFunctor::operator() """
+
+
+  Parameters
+  ----------
+    const int ell
+    const int mp
+    const int m
+  
+  Returns
+  -------
+    double
+  
+"""
+
+%feature("docstring") LadderOperatorFactorCalculator """
+
+
+  Parameters
+  ----------
+    (none)
+  
+  Returns
+  -------
+    vector<double>
+  
+  Description
+  -----------
+    We need (2*ell+1) coefficients for each value of ell from 0 (for
+    completeness) up to ellMax (hard coded in the header file). That's a total
+    of from sympy import summation, symbols ell, ellMax, m, mp = symbols('ell
+    ellMax m mp', integer=True) summation(2*ell+1, (ell, 0, ellMax))
+    
+    ellMax**2 + 2*ellMax + 1 With a similar calculation, we can see that the
+    associated access operator needs element summation(2*ell+1, (ell, 0,
+    ell-1)) + ell + m
+    
+    ell**2 + ell + m
+  
+"""
+
+%feature("docstring") SphericalFunctions::BinomialCoefficientFunctor::BinomialCoefficientFunctor """
+
+
+  Parameters
+  ----------
+    (none)
+  
+  Returns
+  -------
+    BinomialCoefficientFunctor
+  
+"""
+
+%feature("docstring") SphericalFunctions::SWSH::operator() """
+
+
+  Parameters
+  ----------
+    const int ell
+    const int m
+  
+  Returns
+  -------
+    complex<double>
+  
+"""
+
+%feature("docstring") std """
+namespace std
+=============
+  STL namespace.
+  
+"""
+
+%feature("docstring") SphericalFunctions::FactorialFunctor::operator() """
+
+
+  Parameters
+  ----------
+    const unsigned int i
+  
+  Returns
+  -------
+    double
+  
+"""
+
+%feature("docstring") SphericalFunctions::FactorialFunctor """
+class SphericalFunctions::FactorialFunctor
+==========================================
+  Object for pre-computing and retrieving factorials.
+  
+  Member variables
+  ----------------
+    const vector<double> FactorialTable
+  
+"""
+
+%feature("docstring") WignerDMatrix::WignerDMatrix """
+Construct the D matrix object given the (optional) rotor.
+=========================================================
+  Parameters
+  ----------
+    const Quaternions::Quaternion& iR = Quaternions::Quaternion(1, 0, 0, 0)
+  
+  Returns
+  -------
+    WignerDMatrix
+  
+"""
+
+%feature("docstring") SphericalFunctions::LadderOperatorFactorFunctor """
+class SphericalFunctions::LadderOperatorFactorFunctor
+=====================================================
+  Object for pre-computing and retrieving values of the ladder operators.
+  
+  Member variables
+  ----------------
+    const vector<double> FactorTable
+  
+"""
+
+%feature("docstring") SphericalFunctions::SWSH::Evaluate """
+Evaluate Modes at the point given by the rotor.
+===============================================
+  Parameters
+  ----------
+    const vector<complex<double>>& Modes
+      vector<complex<double>> in spinsfast order (which include ell=0, etc.)
+  
+  Returns
+  -------
+    complex<double>
+  
+  Description
+  -----------
+    Assuming the current rotor (or angles), evaluate the given data at that
+    point. (See the SWSHs class documentation for more detail regarding the
+    rotor.)
+    
+    Note that the input data are assumed to start with ell=0, incrementing m
+    from -ell to ell, then incrementing ell. This is assumed even if the spin
+    weight is nonzero, so ell=0 modes must be nonzero, to agree with the order
+    of data required for the spinsfast module. Any data in these 'impossible'
+    slots will just be ignored.
+    
+    In many cases, evaluating with spinsfast itself should be preferable.
+    However, the major advantage of this code is that it allows for evaluation
+    with respect to a rotor. For functions of nonzero spin weight, this
+    automatically incorporates the spin orientation of the relevant tetrad,
+    which is necessary, for example when imposing a boost.
   
 """
 
@@ -239,44 +386,18 @@ Evaluate the D matrix element for the given (ell, mp, m) indices.
   
 """
 
-%feature("docstring") SphericalFunctions::FactorialFunctor """
-class SphericalFunctions::FactorialFunctor
-==========================================
-  Object for pre-computing and retrieving factorials.
+%feature("docstring") SphericalFunctions::BinomialCoefficientFunctor """
+class SphericalFunctions::BinomialCoefficientFunctor
+====================================================
+  Object for pre-computing and retrieving binomials.
   
   Member variables
   ----------------
-    const vector<double> FactorialTable
+    const vector<double> BinomialCoefficientTable
   
 """
 
-%feature("docstring") SphericalFunctions::SWSH """
-class SphericalFunctions::SWSH
-==============================
-  Object for computing values of the spin-weighted spherical harmonics (SWSHs)
-  
-  Member variables
-  ----------------
-    WignerDMatrix D
-
-            Note that this object is a functor taking a quaternion argument.
-      Ordinarily, we think of this quaternion as being the rotor taking the
-      unit $z$ vector into a point $(\\vartheta, \\varphi)$, which gives us the
-      usual form of SWSHs. However, more general arguments are possible; no
-      checking is done to ensure that the argument has the simple form of a
-      minimal rotation to the spherical coordinate.    int spin
-    double sign
-  
-"""
-
-%feature("docstring") std """
-namespace std
-=============
-  STL namespace.
-  
-"""
-
-%feature("docstring") LadderOperatorFactorCalculator """
+%feature("docstring") SphericalFunctions::WignerCoefficientFunctor::WignerCoefficientFunctor """
 
 
   Parameters
@@ -285,96 +406,20 @@ namespace std
   
   Returns
   -------
-    vector<double>
-  
-  Description
-  -----------
-    We need (2*ell+1) coefficients for each value of ell from 0 (for
-    completeness) up to ellMax (hard coded in the header file). That's a total
-    of from sympy import summation, symbols ell, ellMax, m, mp = symbols('ell
-    ellMax m mp', integer=True) summation(2*ell+1, (ell, 0, ellMax))
-    
-    ellMax**2 + 2*ellMax + 1 With a similar calculation, we can see that the
-    associated access operator needs element summation(2*ell+1, (ell, 0,
-    ell-1)) + ell + m
-    
-    ell**2 + ell + m
+    WignerCoefficientFunctor
   
 """
 
-%feature("docstring") SphericalFunctions::LadderOperatorFactorFunctor::operator() """
-
-
+%feature("docstring") N_ellm """
+Return the size of the array needed to express this ell.
+========================================================
   Parameters
   ----------
     const int ell
-    const int m
   
   Returns
   -------
-    double
-  
-"""
-
-%feature("docstring") SphericalFunctions """
-namespace SphericalFunctions
-============================
-"""
-
-%feature("docstring") SphericalFunctions::WignerDMatrix """
-class SphericalFunctions::WignerDMatrix
-=======================================
-  Object for computing the Wigner D matrices as functions of quaternion rotors.
-  
-  Member variables
-  ----------------
-    BinomialCoefficientFunctor BinomialCoefficient
-    WignerCoefficientFunctor WignerCoefficient
-    complex<double> Ra
-    complex<double> Rb
-    double absRa
-    double absRb
-    double absRRatioSquared
-  
-"""
-
-%feature("docstring") SphericalFunctions::SWSH::SetAngles """
-
-
-  Parameters
-  ----------
-    const double vartheta
-    const double varphi
-  
-  Returns
-  -------
-    SWSH&
-  
-"""
-
-%feature("docstring") WignerDMatrix::WignerDMatrix """
-Construct the D matrix object given the (optional) rotor.
-=========================================================
-  Parameters
-  ----------
-    const Quaternions::Quaternion& iR = Quaternions::Quaternion(1, 0, 0, 0)
-  
-  Returns
-  -------
-    WignerDMatrix
-  
-"""
-
-%feature("docstring") SphericalFunctions::FactorialFunctor::FactorialFunctor """
-
-
-  Parameters
-  ----------
-    (none)
-  
-  Returns
-  -------
-    FactorialFunctor
+    int
   
 """
 
