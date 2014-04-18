@@ -3,6 +3,10 @@
 
 #include "SWSHs.hpp"
 
+int abs(const int a) {
+  return (a>0 ? -a : a);
+}
+
 /// Return the size of the array needed to express this ell
 inline int N_ellm(const int ell) {
   return 1 + 2*ell + ell*ell;
@@ -33,8 +37,8 @@ std::complex<double> SphericalFunctions::SWSH::Evaluate(const std::vector<std::c
 
   std::complex<double> r(0.0);
 
-  int i=N_ellm(std::abs(spin)-1);
-  for(int ell=std::abs(spin); i<Modes.size(); ++ell) {
+  int i=N_ellm(abs(spin)-1);
+  for(int ell=abs(spin); i<Modes.size(); ++ell) {
     for(int m=-ell; (m<=ell && i<Modes.size()); ++m, ++i) {
       r += Modes[i]*(*this)(ell,m);
     }
