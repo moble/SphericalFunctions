@@ -11,40 +11,13 @@ using std::complex;
 using std::cerr;
 using std::endl;
 
-std::vector<double> WignerCoefficientCalculator() {
-  /// We need (2*ell+1)*(2*ell+1) coefficients for each value of ell
-  /// from 0 (for completenes) up to ellMax (hard coded in the header
-  /// file).  That's a total of
-  ///   >>> from sympy import summation, symbols, simplify
-  ///   >>> from sympy.polys.polyfuncs import horner
-  ///   >>> ell, ellMax, m, mp = symbols('ell ellMax m mp', integer=True)
-  ///   >>> horner(simplify(summation((2*ell+1)**2, (ell, 0, ellMax))))
-  ///   ellMax*(ellMax*(4*ellMax/3 + 4) + 11/3) + 1
-  /// With a similar calculation, we can see that the associated access
-  /// operator needs element
-  ///   >>> horner(summation((2*ell+1)**2, (ell, 0, ell-1)) + (2*ell+1)*(ell+mp) + ell + m)
-  ///   ell*(ell*(4*ell/3 + 2) + 5/3) + mp*(2*ell + 1) + m
-  /// of the array.
-  std::vector<double> CoefficientTable(ellMax*(ellMax*(4*ellMax + 12) + 11)/3 + 1);
-  const FactorialSingleton& Factorial = FactorialSingleton::Instance();
-  unsigned int i=0;
-  for(int ell=0; ell<=ellMax; ++ell) {
-    for(int mp=-ell; mp<=ell; ++mp) {
-      for(int m=-ell; m<=ell; ++m) {
-        CoefficientTable[i++] =
-          std::sqrt( Factorial(ell+m)*Factorial(ell-m)
-                     / double(Factorial(ell+mp)*Factorial(ell-mp)) );
-      }
-    }
-  }
-  return CoefficientTable;
-}
-const std::vector<double> WignerCoefficientFunctor::CoefficientTable = WignerCoefficientCalculator();
+const WignerCoefficientSingleton* WignerCoefficientSingleton::WignerCoefficientInstance = NULL;
 
 
 /// Construct the D matrix object given the (optional) rotor.
 WignerDMatrix::WignerDMatrix(const Quaternion& R)
-  : BinomialCoefficient(BinomialCoefficientSingleton::Instance()), WignerCoefficient(),
+  : BinomialCoefficient(BinomialCoefficientSingleton::Instance()),
+    WignerCoefficient(WignerCoefficientSingleton::Instance()),
     Ra(R[0], R[3]), Rb(R[2], R[1]),
     absRa(abs(Ra)), absRb(abs(Rb)), absRRatioSquared(absRb*absRb/(absRa*absRa))
 { }
