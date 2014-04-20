@@ -18,10 +18,10 @@ namespace SphericalFunctions {
     inline double operator()(const int ell, const int mp, const int m) const {
       #ifdef DEBUG
       if(ell>ellMax_Utilities || std::abs(mp)>ell || std::abs(m)>ell) {
-	std::cerr << "\n\n(ell, mp, m) = (" << ell << ", " << mp << ", " << m << ")\tellMax_Utilities = " << ellMax_Utilities
-		  << "\nWignerCoefficientFunctor is only implemented up to ell=" << ellMax_Utilities
-		  << ".\nTo increase this bound, edit 'ellMax_Utilities' in " << __FILE__ << " and recompile." << std::endl;
-	throw(IndexOutOfBounds);
+        std::cerr << "\n\n(ell, mp, m) = (" << ell << ", " << mp << ", " << m << ")\tellMax_Utilities = " << ellMax_Utilities
+                  << "\nWignerCoefficientFunctor is only implemented up to ell=" << ellMax_Utilities
+                  << ".\nTo increase this bound, edit 'ellMax_Utilities' in " << __FILE__ << " and recompile." << std::endl;
+        throw(IndexOutOfBounds);
       }
       #endif
       return CoefficientTable[ell*(ell*(4*ell + 6) + 5)/3 + mp*(2*ell + 1) + m];

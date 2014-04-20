@@ -31,9 +31,9 @@ std::vector<double> WignerCoefficientCalculator() {
   for(int ell=0; ell<=ellMax; ++ell) {
     for(int mp=-ell; mp<=ell; ++mp) {
       for(int m=-ell; m<=ell; ++m) {
-	CoefficientTable[i++] =
-	  std::sqrt( Factorial(ell+m)*Factorial(ell-m)
-		     / double(Factorial(ell+mp)*Factorial(ell-mp)) );
+        CoefficientTable[i++] =
+          std::sqrt( Factorial(ell+m)*Factorial(ell-m)
+                     / double(Factorial(ell+mp)*Factorial(ell-mp)) );
       }
     }
   }
@@ -78,11 +78,11 @@ std::complex<double> WignerDMatrix::operator()(const int ell, const int mp, cons
     for(int rho=rhoMax; rho>=rhoMin; --rho) {
       const double aTerm = std::pow(absRaSquared, ell-m-rho);
       if(aTerm != aTerm || aTerm<1.e-100) { // This assumes --fast-math is off
-	Sum *= absRbSquared;
-	continue;
+        Sum *= absRbSquared;
+        continue;
       }
       Sum = ( (rho%2==0 ? 1 : -1) * BinomialCoefficient(ell+mp,rho) * BinomialCoefficient(ell-mp, ell-rho-m) * aTerm )
-	+ ( Sum * absRbSquared );
+        + ( Sum * absRbSquared );
     }
     return Prefactor * Sum * std::pow(absRbSquared, rhoMin);
   }
