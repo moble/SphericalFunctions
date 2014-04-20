@@ -10,7 +10,7 @@
 
 # By default, just call the python build process
 all : Quaternions
-	python setup.py install --user
+	$(shell python setup.py install --user)
 
 
 Quaternions :

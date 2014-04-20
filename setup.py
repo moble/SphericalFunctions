@@ -16,6 +16,16 @@ Now, 'import SphericalFunctions' may be run from a python
 instance started in any directory on the system.
 """
 
+## Check for `--no-GSL` option
+from sys import argv
+if '--no-GSL' in argv:
+    GSL=False
+    GSLDef = ''
+    argv.remove('--no-GSL')
+else:
+    GSL=True
+    GSLDef = '-DUSE_GSL'
+
 ## If PRD won't let me keep a subdirectory, make one
 from os.path import exists
 from os import makedirs
@@ -58,22 +68,53 @@ if isdir('/opt/local/include'):
 if isdir('/opt/local/lib'):
     LibDirs += ['/opt/local/lib']
 
+# Add directories for GSL, if needed
+if GSL :
+    SourceFiles = ['Quaternions/Quaternions.cpp',
+                   'Quaternions/Utilities.cpp',
+                   'Quaternions/IntegrateAngularVelocity.cpp',
+                   'Combinatorics.cpp',
+                   'WignerDMatrices.cpp',
+                   'SWSHs.cpp',
+                   'SphericalFunctions.i']
+    Dependencies = ['Quaternions/Quaternions.hpp',
+                    'Quaternions/Utilities.hpp',
+                    'Quaternions/IntegrateAngularVelocity.hpp',
+                    'Combinatorics.hpp',
+                    'WignerDMatrices.hpp',
+                    'SWSHs.hpp',
+                    'Errors.hpp']
+    Libraries = ['gsl', 'gslcblas']
+    ## See if GSL_HOME is set; if so, use it
+    if "GSL_HOME" in environ :
+        IncDirs = [environ["GSL_HOME"]+'/include'] + IncDirs
+        LibDirs = [environ["GSL_HOME"]+'/lib'] + IncDirs
+else :
+    SourceFiles = ['Quaternions/Quaternions.cpp',
+                   'Quaternions/Utilities.cpp',
+                   'Combinatorics.cpp',
+                   'WignerDMatrices.cpp',
+                   'SWSHs.cpp',
+                   'SphericalFunctions.i']
+    Dependencies = ['Quaternions/Quaternions.hpp',
+                    'Quaternions/Utilities.hpp',
+                    'Combinatorics.hpp',
+                    'WignerDMatrices.hpp',
+                    'SWSHs.hpp',
+                    'Errors.hpp']
+    Libraries = []
+
+## See if FFTW3_HOME is set; if so, use it
+if "FFTW3_HOME" in environ :
+    IncDirs += [environ["FFTW3_HOME"]+'/include']
+    LibDirs += [environ["FFTW3_HOME"]+'/lib']
+
 ## Remove a compiler flag that doesn't belong there for C++
 import distutils.sysconfig as ds
 cfs=ds.get_config_vars()
 for key, value in cfs.items() :
     if(type(cfs[key])==str) :
         cfs[key] = value.replace('-Wstrict-prototypes', '')
-
-# ## Try to determine an automatic version number for this
-# try :
-#     with open(devnull, "w") as fnull :
-#         GitRev = check_output('git rev-parse HEAD', shell=True, stderr=fnull)[:-1]
-#         CodeRevision = '"{0}"'.format(GitRev)
-#         PackageVersion = GitRev[:9]
-# except (NameError, CalledProcessError) :
-#     CodeRevision = '"PaperVersion3"'
-#     PackageVersion = '3'
 
 ## Read in the license
 try :
@@ -106,27 +147,19 @@ setup(name="SphericalFunctions",
       # scripts = ['Scripts/RunExtrapolations.py', 'Scripts/ConvertGWDatToH5.py'],
       ext_modules = [
         Extension('_SphericalFunctions',
-                  ['Quaternions/Quaternions.cpp',
-                   'Combinatorics.cpp',
-                   'WignerDMatrices.cpp',
-                   'SWSHs.cpp',
-                   'SphericalFunctions.i'],
-                  depends = ['Quaternions/Quaternions.hpp',
-                             'Combinatorics.hpp',
-                             'WignerDMatrices.hpp',
-                             'SWSHs.hpp',
-                             'Errors.hpp'],
+                  sources=SourceFiles,
+                  depends=Dependencies,
                   include_dirs=IncDirs,
                   library_dirs=LibDirs,
-                  #libraries=['gsl', 'gslcblas',],
+                  libraries=Libraries,
                   #define_macros = [('CodeRevision', CodeRevision)],
                   language='c++',
                   swig_opts=swig_opts,
                   extra_link_args=['-fPIC'],
                   # extra_link_args=['-lgomp', '-fPIC', '-Wl,-undefined,error'], # `-undefined,error` tells the linker to fail on undefined symbols
-                  extra_compile_args=['-Wno-deprecated', '-ffast-math']
+                  extra_compile_args=['-Wno-deprecated', '-ffast-math', GSLDef],
                   # extra_compile_args=['-fopenmp']
-              )
+              ),
       ],
       # classifiers = ,
       # distclass = ,
