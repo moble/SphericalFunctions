@@ -26,7 +26,7 @@ std::vector<double> WignerCoefficientCalculator() {
   ///   ell*(ell*(4*ell/3 + 2) + 5/3) + mp*(2*ell + 1) + m
   /// of the array.
   std::vector<double> CoefficientTable(ellMax*(ellMax*(4*ellMax + 12) + 11)/3 + 1);
-  FactorialFunctor Factorial;
+  const FactorialSingleton& Factorial = FactorialSingleton::Instance();
   unsigned int i=0;
   for(int ell=0; ell<=ellMax; ++ell) {
     for(int mp=-ell; mp<=ell; ++mp) {

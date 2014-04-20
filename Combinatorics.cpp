@@ -7,6 +7,9 @@
 using namespace SphericalFunctions;
 using std::vector;
 
+const FactorialSingleton* FactorialSingleton::FactorialInstance = NULL;
+
+
 // /// Class to create an object returning the factorial of an argument.
 // vector<double> FactorialTableCalculator() {
 //   /// Note that because a double is returned, only values up to 28!
@@ -21,6 +24,8 @@ using std::vector;
 //   return FactorialTable;
 // }
 // const std::vector<double> FactorialFunctor::FactorialTable = FactorialTableCalculator();
+std::vector<double> FactorialFunctor::FactorialTable = std::vector<double>(171);
+bool FactorialFunctor::FactorialTableWasComputed=false;
 
 // vector<double> BinomialCoefficientCalculator() {
 //   /// We need (n+1) coefficients for each value of n from 0 (for
@@ -43,6 +48,8 @@ using std::vector;
 //   return BinomialCoefficientTable;
 // }
 // const std::vector<double> BinomialCoefficientFunctor::BinomialCoefficientTable = BinomialCoefficientCalculator();
+std::vector<double> BinomialCoefficientFunctor::BinomialCoefficientTable = std::vector<double>(2*ellMax*ellMax + 3*ellMax + 1);
+bool BinomialCoefficientFunctor::BinomialCoefficientTableWasComputed=false;
 
 // vector<double> LadderOperatorFactorCalculator() {
 //   /// We need (2*ell+1) coefficients for each value of ell from 0 (for
@@ -66,3 +73,5 @@ using std::vector;
 //   return FactorTable;
 // }
 // const std::vector<double> LadderOperatorFactorFunctor::FactorTable = LadderOperatorFactorCalculator();
+std::vector<double> LadderOperatorFactorFunctor::FactorTable = std::vector<double>(ellMax*ellMax + 2*ellMax + 1);
+bool LadderOperatorFactorFunctor::FactorTableWasComputed=false;
