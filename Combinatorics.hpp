@@ -31,9 +31,7 @@ namespace SphericalFunctions {
       FactorialInstance = that.FactorialInstance;
     }
     FactorialSingleton& operator=(const FactorialSingleton& that) {
-      if(this!=&that) {
-        FactorialInstance = that.FactorialInstance;
-      }
+      if(this!=&that) FactorialInstance = that.FactorialInstance;
       return *this;
     }
     ~FactorialSingleton() { }
@@ -48,52 +46,36 @@ namespace SphericalFunctions {
     }
   }; // class FactorialSingleton
 
-  /// Object for pre-computing and retrieving factorials
-  class FactorialFunctor {
-  private:
-    static std::vector<double> FactorialTable;
-    static bool FactorialTableWasComputed;
-  public:
-    FactorialFunctor() {
-      if(!FactorialTableWasComputed) {
-        FactorialTable[0] = 1.0;
-        for (int i=1;i<171;i++) {
-          FactorialTable[i] = i*FactorialTable[i-1];
-        }
-        FactorialTableWasComputed = true;
-      }
-    };
-    inline double operator()(const unsigned int i) const {
-      #ifdef DEBUG
-      if(i>171) {
-        std::cerr << "\n\ni = " << i << "\tiMax = 171"
-                  << "\nFactorialFunctor is only implemented up to 171!; larger values overflow."
-                  << std::endl;
-        throw(IndexOutOfBounds);
-      }
-      #endif
-      return FactorialTable[i];
-    }
-  };
-
   /// Object for pre-computing and retrieving binomials
-  class BinomialCoefficientFunctor {
+  class BinomialCoefficientSingleton {
   private:
-    static std::vector<double> BinomialCoefficientTable;
-    static bool BinomialCoefficientTableWasComputed;
-  public:
-    BinomialCoefficientFunctor() {
-      if(!BinomialCoefficientTableWasComputed) {
-        unsigned int i=0;
-        const FactorialSingleton& Factorial = FactorialSingleton::Instance();
-        for(unsigned int n=0; n<=2*ellMax; ++n) {
-          for(unsigned int k=0; k<=n; ++k) {
-            BinomialCoefficientTable[i++] = std::floor(0.5+Factorial(n)/(Factorial(k)*Factorial(n-k)));
-          }
+    static const BinomialCoefficientSingleton* BinomialCoefficientInstance;
+    std::vector<double> BinomialCoefficientTable;
+    BinomialCoefficientSingleton()
+      : BinomialCoefficientTable(2*ellMax*ellMax + 3*ellMax + 1)
+    {
+      unsigned int i=0;
+      const FactorialSingleton& Factorial = FactorialSingleton::Instance();
+      for(unsigned int n=0; n<=2*ellMax; ++n) {
+        for(unsigned int k=0; k<=n; ++k) {
+          BinomialCoefficientTable[i++] = std::floor(0.5+Factorial(n)/(Factorial(k)*Factorial(n-k)));
         }
-        BinomialCoefficientTableWasComputed = true;
       }
-    };
+    }
+    BinomialCoefficientSingleton(const BinomialCoefficientSingleton& that) {
+      BinomialCoefficientInstance = that.BinomialCoefficientInstance;
+    }
+    BinomialCoefficientSingleton& operator=(const BinomialCoefficientSingleton& that) {
+      if(this!=&that) BinomialCoefficientInstance = that.BinomialCoefficientInstance;
+      return *this;
+    }
+    ~BinomialCoefficientSingleton() { }
+  public:
+    static const BinomialCoefficientSingleton& Instance() {
+      static const BinomialCoefficientSingleton Instance;
+      BinomialCoefficientInstance = &Instance;
+      return *BinomialCoefficientInstance;
+    }
     inline double operator()(const unsigned int n, const unsigned int k) const {
       #ifdef DEBUG
       if(n>2*ellMax_Utilities || k>n) {
@@ -106,24 +88,35 @@ namespace SphericalFunctions {
       return BinomialCoefficientTable[(n*(n+1))/2+k];
     }
   };
-  // std::vector<double> BinomialCoefficientFunctor::BinomialCoefficientTable = std::vector<double>(2*ellMax*ellMax + 3*ellMax + 1);
-  // bool BinomialCoefficientFunctor::BinomialCoefficientTableWasComputed=false;
 
-  /// Object for pre-computing and retrieving values of the ladder operators
-  class LadderOperatorFactorFunctor {
+  class LadderOperatorFactorSingleton {
   private:
-    static std::vector<double> FactorTable;
-    static bool FactorTableWasComputed;
-  public:
-    LadderOperatorFactorFunctor() {
+    static const LadderOperatorFactorSingleton* LadderOperatorFactorInstance;
+    std::vector<double> FactorTable;
+    LadderOperatorFactorSingleton()
+      : FactorTable(ellMax*ellMax + 2*ellMax + 1)
+    {
       unsigned int i=0;
       for(int ell=0; ell<=ellMax; ++ell) {
         for(int m=-ell; m<=ell; ++m) {
           FactorTable[i++] = std::sqrt(ell*(ell+1)-m*(m+1));
         }
       }
-      FactorTableWasComputed = true;
-    };
+    }
+    LadderOperatorFactorSingleton(const LadderOperatorFactorSingleton& that) {
+      LadderOperatorFactorInstance = that.LadderOperatorFactorInstance;
+    }
+    LadderOperatorFactorSingleton& operator=(const LadderOperatorFactorSingleton& that) {
+      if(this!=&that) LadderOperatorFactorInstance = that.LadderOperatorFactorInstance;
+      return *this;
+    }
+    ~LadderOperatorFactorSingleton() { }
+  public:
+    static const LadderOperatorFactorSingleton& Instance() {
+      static const LadderOperatorFactorSingleton Instance;
+      LadderOperatorFactorInstance = &Instance;
+      return *LadderOperatorFactorInstance;
+    }
     inline double operator()(const int ell, const int m) const {
       #ifdef DEBUG
       if(ell>ellMax_Utilities || std::abs(m)>ell) {
@@ -136,8 +129,6 @@ namespace SphericalFunctions {
       return FactorTable[ell*ell+ell+m];
     }
   };
-  // std::vector<double> LadderOperatorFactorFunctor::FactorTable = std::vector<double>(ellMax*ellMax + 2*ellMax + 1);
-  // bool LadderOperatorFactorFunctor::FactorTableWasComputed=false;
 
 } // namespace SphericalFunctions
 

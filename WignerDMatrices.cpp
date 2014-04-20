@@ -44,7 +44,7 @@ const std::vector<double> WignerCoefficientFunctor::CoefficientTable = WignerCoe
 
 /// Construct the D matrix object given the (optional) rotor.
 WignerDMatrix::WignerDMatrix(const Quaternion& R)
-  : BinomialCoefficient(), WignerCoefficient(),
+  : BinomialCoefficient(BinomialCoefficientSingleton::Instance()), WignerCoefficient(),
     Ra(R[0], R[3]), Rb(R[2], R[1]),
     absRa(abs(Ra)), absRb(abs(Rb)), absRRatioSquared(absRb*absRb/(absRa*absRa))
 { }

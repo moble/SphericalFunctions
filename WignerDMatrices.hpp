@@ -31,7 +31,7 @@ namespace SphericalFunctions {
   /// Object for computing the Wigner D matrices as functions of quaternion rotors
   class WignerDMatrix {
   private:
-    BinomialCoefficientFunctor BinomialCoefficient;
+    const BinomialCoefficientSingleton& BinomialCoefficient;
     WignerCoefficientFunctor WignerCoefficient;
     std::complex<double> Ra, Rb;
     double absRa, absRb, absRRatioSquared;
