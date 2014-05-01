@@ -7,6 +7,6 @@
 using namespace SphericalFunctions;
 using std::vector;
 
-const FactorialSingleton* FactorialSingleton::FactorialInstance = NULL;
-const BinomialCoefficientSingleton* BinomialCoefficientSingleton::BinomialCoefficientInstance = NULL;
-const LadderOperatorFactorSingleton* LadderOperatorFactorSingleton::LadderOperatorFactorInstance = NULL;
+const FactorialSingleton* FactorialSingleton::FactorialInstance = 0;
+const BinomialCoefficientSingleton* BinomialCoefficientSingleton::BinomialCoefficientInstance = 0;
+const LadderOperatorFactorSingleton* LadderOperatorFactorSingleton::LadderOperatorFactorInstance = 0;
