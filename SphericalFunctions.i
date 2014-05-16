@@ -45,7 +45,7 @@
     "Unknown exception",
     "Unknown exception",
     "Unknown exception",
-    "Unknown exception",// "Bad value.",
+    "Bad value.",
     "Unknown exception",// "Bad switches; we should not have gotten here.",
     "Index out of bounds.",
     "Unknown exception",
@@ -68,7 +68,7 @@
     PyExc_RuntimeError, // [empty]
     PyExc_RuntimeError, // [empty]
     PyExc_RuntimeError, // [empty]
-    PyExc_RuntimeError, // PyExc_ValueError, // Bad value
+    PyExc_ValueError, // Bad value
     PyExc_RuntimeError, // PyExc_ValueError, // Bad switches
     PyExc_IndexError, // Index out of bounds
     PyExc_RuntimeError, // [empty]

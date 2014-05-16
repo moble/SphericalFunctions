@@ -9,7 +9,7 @@
 
 
 # By default, just call the python build process
-all : Quaternions
+all :
 	$(shell python setup.py install --user)
 
 
@@ -22,8 +22,10 @@ Quaternions :
 # the following is, unfortunately, necessary for him.  This makes him
 # happy.  It is probably not necessary for most users, however.
 MikeHappy :
-	cd Quaternions && $(VIRTUAL_ENV)/bin/python setup.py install --prefix=$(VIRTUAL_ENV)
 	$(VIRTUAL_ENV)/bin/python setup.py install --prefix=$(VIRTUAL_ENV)
+
+
+#	cd Quaternions && $(VIRTUAL_ENV)/bin/python setup.py install --prefix=$(VIRTUAL_ENV)
 
 
 

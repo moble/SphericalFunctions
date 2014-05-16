@@ -41,6 +41,9 @@ namespace SphericalFunctions {
       FactorialInstance = &Instance;
       return *FactorialInstance;
     }
+    inline double operator[](const unsigned int i) const {
+      return FactorialTable[i];
+    }
     inline double operator()(const unsigned int i) const {
       return FactorialTable[i];
     }
@@ -129,6 +132,62 @@ namespace SphericalFunctions {
       return FactorTable[ell*ell+ell+m];
     }
   };
+
+  // GSL is about 3 times slower than my function (which I just translated from sympy)
+  // #ifdef USE_GSL
+  // extern "C" {
+  //   #include <gsl/gsl_sf_coupling.h>
+  // }
+  // inline double Wigner3j(int j_1, int j_2, int j_3, int m_1, int m_2, int m_3) {
+  //   return gsl_sf_coupling_3j(2*j_1, 2*j_2, 2*j_3, 2*m_1, 2*m_2, 2*m_3);
+  // }
+  // #else
+  double Wigner3j(int j_1, int j_2, int j_3, int m_1, int m_2, int m_3);
+  // #endif
+
+  // class Wigner3jSingleton {
+  //   /// CAUTION!!!
+  //   ///
+  //   /// Preliminary testing shows that this is actually SLOWER than
+  //   /// the direct evaluation of the Wigner3j function, at least for
+  //   /// ell<=16, which is all this is currently implemented for.
+  //   /// Presumably, this is because the indexing function has to
+  //   /// manipulate a magic square to translate the arguments into an
+  //   /// index.  In particular, it is substantially slower for small
+  //   /// ell values, but seems to catch up for larger ones.
+  //   ///
+  //   /// Also, even if you decide to use this, this is NOT a thread-safe
+  //   /// singleton.  Because of various optimizations I've added to make
+  //   /// this faster, there are mutables.
+  //   ///
+  //   /// This class is intended to implement the storage algorithm
+  //   /// introduced by Rasch and Yu [SIAM J. Sci. Comput. (2003) 25, 4,
+  //   /// 1416--1428].  I may not be doing the magic-square
+  //   /// manipulations in the most clever way, which might improve the
+  //   /// speed of this algorithm.
+  // private:
+  //   static const Wigner3jSingleton* Wigner3jInstance;
+  //   std::vector<double> FactorTable;
+  //   mutable std::vector<std::vector<int> > MagicSquare;
+  //   mutable int S,i_S,j_S,L,i_L,j_L,i_T,j_T,B,X,T,j,i;
+  //   Wigner3jSingleton();
+  //   Wigner3jSingleton(const Wigner3jSingleton& that) {
+  //     Wigner3jInstance = that.Wigner3jInstance;
+  //   }
+  //   Wigner3jSingleton& operator=(const Wigner3jSingleton& that) {
+  //     if(this!=&that) Wigner3jInstance = that.Wigner3jInstance;
+  //     return *this;
+  //   }
+  //   ~Wigner3jSingleton() { }
+  // public:
+  //   static const Wigner3jSingleton& Instance() {
+  //     static const Wigner3jSingleton Instance;
+  //     Wigner3jInstance = &Instance;
+  //     return *Wigner3jInstance;
+  //   }
+  //   double operator()(int j_1, int j_2, int j_3, int m_1, int m_2, int m_3) const;
+  // };
+
 
 } // namespace SphericalFunctions
 
