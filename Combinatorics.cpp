@@ -4,6 +4,7 @@
 #include "Combinatorics.hpp"
 #include <iostream>
 #include <complex>
+#include <cmath>
 #include "Errors.hpp"
 
 // This macro is useful for debugging
@@ -56,7 +57,7 @@ double SphericalFunctions::Wigner3j(int j_1, int j_2, int j_3, int m_1, int m_2,
   if(a3 < 0) {
     return 0;
   }
-  if( (abs(m_1) > j_1) || (abs(m_2) > j_2) || (abs(m_3) > j_3) ) {
+  if( (std::abs(m_1) > j_1) || (std::abs(m_2) > j_2) || (std::abs(m_3) > j_3) ) {
     return 0;
   }
 
