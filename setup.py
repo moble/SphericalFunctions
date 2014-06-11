@@ -58,28 +58,37 @@ from os import devnull, environ
 
 # Add directories for numpy and other inclusions
 from numpy import get_include
-IncDirs = ['Quaternions', get_include()]
+IncDirs = [get_include()]
 LibDirs = []
 
 # If /opt/local directories exist, use them
-from os.path import isdir
+from os.path import isdir, isfile
 if isdir('/opt/local/include'):
     IncDirs += ['/opt/local/include']
 if isdir('/opt/local/lib'):
     LibDirs += ['/opt/local/lib']
 
+# Make sure `Quaternions` is either checked out here or at the level above
+if isdir('Quaternions') and isfile('Quaternions/numpy.i'):
+    QuaternionsPath = 'Quaternions'
+elif isdir('../Quaternions') and isfile('../Quaternions/numpy.i'):
+    QuaternionsPath = '../Quaternions'
+else:
+    raise EnvironmentError("Can't find `Quaternions` module.  Did you forget to `git submodule init` and `git submodule update`?")
+IncDirs += [QuaternionsPath]
+
 # Add directories for GSL, if needed
 if GSL :
-    SourceFiles = ['Quaternions/Quaternions.cpp',
-                   'Quaternions/Utilities.cpp',
-                   'Quaternions/IntegrateAngularVelocity.cpp',
+    SourceFiles = [QuaternionsPath+'/Quaternions.cpp',
+                   QuaternionsPath+'/Utilities.cpp',
+                   QuaternionsPath+'/IntegrateAngularVelocity.cpp',
                    'Combinatorics.cpp',
                    'WignerDMatrices.cpp',
                    'SWSHs.cpp',
                    'SphericalFunctions.i']
-    Dependencies = ['Quaternions/Quaternions.hpp',
-                    'Quaternions/Utilities.hpp',
-                    'Quaternions/IntegrateAngularVelocity.hpp',
+    Dependencies = [QuaternionsPath+'/Quaternions.hpp',
+                    QuaternionsPath+'/Utilities.hpp',
+                    QuaternionsPath+'/IntegrateAngularVelocity.hpp',
                     'Combinatorics.hpp',
                     'WignerDMatrices.hpp',
                     'SWSHs.hpp',
@@ -90,14 +99,14 @@ if GSL :
         IncDirs = [environ["GSL_HOME"]+'/include'] + IncDirs
         LibDirs = [environ["GSL_HOME"]+'/lib'] + IncDirs
 else :
-    SourceFiles = ['Quaternions/Quaternions.cpp',
-                   'Quaternions/Utilities.cpp',
+    SourceFiles = [QuaternionsPath+'/Quaternions.cpp',
+                   QuaternionsPath+'/Utilities.cpp',
                    'Combinatorics.cpp',
                    'WignerDMatrices.cpp',
                    'SWSHs.cpp',
                    'SphericalFunctions.i']
-    Dependencies = ['Quaternions/Quaternions.hpp',
-                    'Quaternions/Utilities.hpp',
+    Dependencies = [QuaternionsPath+'/Quaternions.hpp',
+                    QuaternionsPath+'/Utilities.hpp',
                     'Combinatorics.hpp',
                     'WignerDMatrices.hpp',
                     'SWSHs.hpp',
@@ -124,7 +133,9 @@ except IOError :
     License = 'See LICENSE file in the source code for details.'
 
 ## Add -py3 if this is python3
-swig_opts=['-globals', 'constants', '-c++', '-builtin',]
+swig_opts=['-globals', 'constants', '-c++', '-builtin']
+if '../' in QuaternionsPath:
+    swig_opts+=['-I..',]
 try:
     import sys
     python_major = sys.version_info.major
