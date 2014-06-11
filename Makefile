@@ -10,7 +10,10 @@
 
 # By default, just call the python build process
 all :
-	$(shell python setup.py install --user)
+	@echo "The default build process has changed, and this Makefile is just for useful hints in unusual cases."
+	@echo ""
+	@echo "You probably want to run the following to build and install the code:"
+	@echo "  python setup.py install --user"
 
 
 # Mike likes to use python's virtual environments to build with
