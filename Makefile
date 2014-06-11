@@ -13,10 +13,6 @@ all :
 	$(shell python setup.py install --user)
 
 
-Quaternions :
-	$(MAKE) -C Quaternions
-
-
 # Mike likes to use python's virtual environments to build with
 # various versions and arrangements of python.  As such, he finds that
 # the following is, unfortunately, necessary for him.  This makes him

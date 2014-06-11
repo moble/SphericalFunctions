@@ -16,8 +16,26 @@ Now, 'import SphericalFunctions' may be run from a python
 instance started in any directory on the system.
 """
 
+from os.path import isdir, isfile
+from subprocess import check_call
+from sys import argv, executable
+
+# Make sure `Quaternions` is either checked out here or at the level above
+if isdir('Quaternions') and isfile('Quaternions/numpy.i'):
+    QuaternionsPath = 'Quaternions'
+elif isdir('../Quaternions') and isfile('../Quaternions/numpy.i'):
+    QuaternionsPath = '../Quaternions'
+else:
+    raise EnvironmentError("Can't find `Quaternions` module.  Did you forget to `git submodule init` and `git submodule update`?")
+
+## Build Quaternions first
+print("\nInstalling Quaternions")
+cmd = ' '.join(['cd {0} && {1}'.format(QuaternionsPath, executable),]+argv)
+print(cmd)
+check_call(cmd, shell=True)
+print("Finished installing Quaternions\n")
+
 ## Check for `--no-GSL` option
-from sys import argv
 if '--no-GSL' in argv:
     GSL=False
     GSLDef = ''
@@ -31,9 +49,6 @@ from os.path import exists
 from os import makedirs
 if not exists('SphericalFunctions') :
     makedirs('SphericalFunctions')
-# from shutil import copyfile
-# if not exists('SphericalFunctions/plot.py') :
-#     copyfile('plot.py', 'SphericalFunctions/plot.py')
 
 ## distutils doesn't build swig modules in the correct order by
 ## default -- the python module is installed first.  This will pop
@@ -58,24 +73,14 @@ from os import devnull, environ
 
 # Add directories for numpy and other inclusions
 from numpy import get_include
-IncDirs = [get_include()]
+IncDirs = [get_include(), QuaternionsPath]
 LibDirs = []
 
 # If /opt/local directories exist, use them
-from os.path import isdir, isfile
 if isdir('/opt/local/include'):
     IncDirs += ['/opt/local/include']
 if isdir('/opt/local/lib'):
     LibDirs += ['/opt/local/lib']
-
-# Make sure `Quaternions` is either checked out here or at the level above
-if isdir('Quaternions') and isfile('Quaternions/numpy.i'):
-    QuaternionsPath = 'Quaternions'
-elif isdir('../Quaternions') and isfile('../Quaternions/numpy.i'):
-    QuaternionsPath = '../Quaternions'
-else:
-    raise EnvironmentError("Can't find `Quaternions` module.  Did you forget to `git submodule init` and `git submodule update`?")
-IncDirs += [QuaternionsPath]
 
 # Add directories for GSL, if needed
 if GSL :
@@ -123,7 +128,7 @@ import distutils.sysconfig as ds
 cfs=ds.get_config_vars()
 for key, value in cfs.items() :
     if(type(cfs[key])==str) :
-        cfs[key] = value.replace('-Wstrict-prototypes', '')
+        cfs[key] = value.replace('-Wstrict-prototypes', '').replace('-Wshorten-64-to-32', '')
 
 ## Read in the license
 try :
