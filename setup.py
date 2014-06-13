@@ -85,14 +85,14 @@ if isdir('/opt/local/lib'):
 # Add directories for GSL, if needed
 if GSL :
     SourceFiles = [QuaternionsPath+'/Quaternions.cpp',
-                   QuaternionsPath+'/Utilities.cpp',
+                   QuaternionsPath+'/QuaternionUtilities.cpp',
                    QuaternionsPath+'/IntegrateAngularVelocity.cpp',
                    'Combinatorics.cpp',
                    'WignerDMatrices.cpp',
                    'SWSHs.cpp',
                    'SphericalFunctions.i']
     Dependencies = [QuaternionsPath+'/Quaternions.hpp',
-                    QuaternionsPath+'/Utilities.hpp',
+                    QuaternionsPath+'/QuaternionUtilities.hpp',
                     QuaternionsPath+'/IntegrateAngularVelocity.hpp',
                     'Combinatorics.hpp',
                     'WignerDMatrices.hpp',
