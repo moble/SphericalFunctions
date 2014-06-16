@@ -93,7 +93,7 @@
     if(i>-1 && i<SphericalFunctionsNumberOfErrors) { s << "SphericalFunctions exception: " << SphericalFunctionsErrors[i]; }
     else  { s << "SphericalFunctions: Unknown exception number {" << i << "}"; }
     PyErr_SetString(SphericalFunctionsExceptions[i], s.str().c_str());
-    return NULL;
+    return 0; // NULL;
   }
 }
 
