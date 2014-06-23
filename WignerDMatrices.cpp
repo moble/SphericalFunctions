@@ -2,6 +2,9 @@
 // See LICENSE file for details
 
 #include "WignerDMatrices.hpp"
+#include <cmath>
+#include <cfloat>
+
 #include "Errors.hpp"
 
 using namespace SphericalFunctions;
@@ -19,7 +22,8 @@ WignerDMatrix::WignerDMatrix(const Quaternion& R)
   : BinomialCoefficient(BinomialCoefficientSingleton::Instance()),
     WignerCoefficient(WignerCoefficientSingleton::Instance()),
     Ra(R[0], R[3]), Rb(R[2], R[1]),
-    absRa(abs(Ra)), absRb(abs(Rb)), absRRatioSquared(absRb*absRb/(absRa*absRa))
+    absRa(abs(Ra)), absRb(abs(Rb)), absRRatioSquared(absRb*absRb/(absRa*absRa)),
+    intlog10absRa(std::log10(absRa)), intlog10absRb(std::log10(absRb))
 { }
 
 /// Reset the rotor for this object to the given value.
@@ -29,22 +33,27 @@ WignerDMatrix& WignerDMatrix::SetRotation(const Quaternion& R) {
   absRa = abs(Ra);
   absRb = abs(Rb);
   absRRatioSquared = absRb*absRb/(absRa*absRa);
+  intlog10absRa = std::log10(absRa);
+  intlog10absRb = std::log10(absRb);
   return *this;
 }
 
 /// Evaluate the D matrix element for the given (ell, mp, m) indices.
 std::complex<double> WignerDMatrix::operator()(const int ell, const int mp, const int m) const {
-  if(absRa < epsilon) {
+  // If either sub-rotor, when raised to the exponent (mp-m), and
+  // multiplied by anything within machine precision of 1, is not
+  // representable as a floating-point number, just treat it as zero.
+  if(absRa < epsilon || 2*intlog10absRa*(mp-m)<DBL_MIN_10_EXP+17) {
     return (mp!=-m ? 0.0 : ((ell+mp)%2==0 ? 1.0 : -1.0) * std::pow(Rb, 2*m) );
   }
-  if(absRb < epsilon) {
+  if(absRb < epsilon || 2*intlog10absRb*(mp-m)<DBL_MIN_10_EXP+17) {
     return (mp!=m ? 0.0 : std::pow(Ra, 2*m) );
   }
+  const int rhoMin = std::max(0,mp-m);
+  const int rhoMax = std::min(ell+mp,ell-m);
   if(absRa < 1.e-3) { // Deal with NANs in certain cases
     const std::complex<double> Prefactor =
       WignerCoefficient(ell, mp, m) * std::pow(Ra, m+mp) * std::pow(Rb, m-mp);
-    const int rhoMin = std::max(0,mp-m);
-    const int rhoMax = std::min(ell+mp,ell-m);
     const double absRaSquared = absRa*absRa;
     const double absRbSquared = absRb*absRb;
     double Sum = 0.0;
@@ -58,16 +67,15 @@ std::complex<double> WignerDMatrix::operator()(const int ell, const int mp, cons
         + ( Sum * absRbSquared );
     }
     return Prefactor * Sum * std::pow(absRbSquared, rhoMin);
+  } else {
+    const std::complex<double> Prefactor =
+      (WignerCoefficient(ell, mp, m) * std::pow(absRa, 2*ell-2*m))
+      * std::pow(Ra, m+mp) * std::pow(Rb, m-mp);
+    double Sum = 0.0;
+    for(int rho=rhoMax; rho>=rhoMin; --rho) {
+      Sum = ( (rho%2==0 ? 1 : -1) * BinomialCoefficient(ell+mp,rho) * BinomialCoefficient(ell-mp, ell-rho-m) )
+        + ( Sum * absRRatioSquared );
+    }
+    return Prefactor * Sum * std::pow(absRRatioSquared, rhoMin);
   }
-  const std::complex<double> Prefactor =
-    (WignerCoefficient(ell, mp, m) * std::pow(absRa, 2*ell-2*m))
-    * std::pow(Ra, m+mp) * std::pow(Rb, m-mp);
-  const int rhoMin = std::max(0,mp-m);
-  const int rhoMax = std::min(ell+mp,ell-m);
-  double Sum = 0.0;
-  for(int rho=rhoMax; rho>=rhoMin; --rho) {
-    Sum = ( (rho%2==0 ? 1 : -1) * BinomialCoefficient(ell+mp,rho) * BinomialCoefficient(ell-mp, ell-rho-m) )
-      + ( Sum * absRRatioSquared );
-  }
-  return Prefactor * Sum * std::pow(absRRatioSquared, rhoMin);
 }

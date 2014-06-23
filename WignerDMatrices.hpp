@@ -63,6 +63,7 @@ namespace SphericalFunctions {
     const WignerCoefficientSingleton& WignerCoefficient;
     std::complex<double> Ra, Rb;
     double absRa, absRb, absRRatioSquared;
+    int intlog10absRa, intlog10absRb;
   public:
     WignerDMatrix(const Quaternions::Quaternion& iR=Quaternions::Quaternion(1,0,0,0));
     WignerDMatrix& SetRotation(const Quaternions::Quaternion& iR);
