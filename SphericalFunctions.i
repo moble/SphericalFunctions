@@ -34,7 +34,49 @@
 ///////////////////////////////////
 
 // The following will appear in the header of the `_wrap.cpp` file.
-%{const char* const SphericalFunctionsErrors[] = {
+%{
+  // The following allows us to elegantly fail in python from manual
+  // interrupts and floating-point exceptions found in the c++ code.
+  // The setjmp part of this was inspired by the post
+  // <http://stackoverflow.com/a/12155582/1194883>.  The code for
+  // setting the csr flags is taken from SpEC.
+  #include <csetjmp>
+  #include <csignal>
+  #ifdef __APPLE__
+    #include <xmmintrin.h>
+  #else
+    #include <fenv.h>     // For feenableexcept. Doesn't seem to be a <cfenv>
+    #ifndef __USE_GNU
+      extern "C" int feenableexcept (int EXCEPTS);
+    #endif
+  #endif
+  static sigjmp_buf SphericalFunctions_FloatingPointExceptionJumpBuffer;
+  static sigjmp_buf SphericalFunctions_InterruptExceptionJumpBuffer;
+  void SphericalFunctions_FloatingPointExceptionHandler(int sig) {
+    siglongjmp(SphericalFunctions_FloatingPointExceptionJumpBuffer, sig);
+  }
+  void SphericalFunctions_InterruptExceptionHandler(int sig) {
+    siglongjmp(SphericalFunctions_InterruptExceptionJumpBuffer, sig);
+  }
+  namespace SphericalFunctions {
+    // This function enables termination on FPE's
+    bool _RaiseFloatingPointException() {
+      signal(SIGFPE, SphericalFunctions_FloatingPointExceptionHandler);
+      signal(SIGINT, SphericalFunctions_InterruptExceptionHandler);
+      #ifdef __APPLE__
+      _mm_setcsr( _MM_MASK_MASK &~
+                  (_MM_MASK_OVERFLOW|_MM_MASK_INVALID|_MM_MASK_DIV_ZERO));
+      #else
+      feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
+      #endif
+      return true;
+    }
+    // Ensure RaiseFloatingPointException() is not optimized away by
+    // using its output to define a global variable.
+    bool RaiseFPE = _RaiseFloatingPointException();
+  }
+
+  const char* const SphericalFunctionsErrors[] = {
     "This function is not yet implemented.",
     "Unknown exception",// "Failed system call.",
     "Unknown exception",// "Bad file name.",
@@ -86,14 +128,29 @@
 // It's a good idea to try to keep this part brief, just to cut down
 // the size of the wrapper file.
 %exception {
-  try {
-    $action;
-  } catch(int i) {
-    std::stringstream s;
-    if(i>-1 && i<SphericalFunctionsNumberOfErrors) { s << "SphericalFunctions exception: " << SphericalFunctionsErrors[i]; }
-    else  { s << "SphericalFunctions: Unknown exception number {" << i << "}"; }
-    PyErr_SetString(SphericalFunctionsExceptions[i], s.str().c_str());
-    return 0; // NULL;
+  if (!sigsetjmp(SphericalFunctions_FloatingPointExceptionJumpBuffer, 1)) {
+    if(!sigsetjmp(SphericalFunctions_InterruptExceptionJumpBuffer, 1)) {
+      try {
+        $action;
+      } catch(int i) {
+        std::stringstream s;
+        if(i>-1 && i<SphericalFunctionsNumberOfErrors) { s << "SphericalFunctions:: $fulldecl: Exception: " << SphericalFunctionsErrors[i]; }
+        else  { s << "SphericalFunctions:: $fulldecl: Unknown exception number {" << i << "}"; }
+        PyErr_SetString(SphericalFunctionsExceptions[i], s.str().c_str());
+        return 0; // NULL;
+      } catch(...) {
+        std::stringstream s;
+        s << "SphericalFunctions:: $fulldecl: Unknown exception; default handler";
+        PyErr_SetString(PyExc_RuntimeError, s.str().c_str());
+        return 0;
+      }
+    } else {
+      PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions:: $fulldecl: Caught a manual interrupt from the c++ code.");
+      return 0;
+    }
+  } else {
+    PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions:: $fulldecl: Caught a floating-point exception from the c++ code.");
+    return 0;
   }
 }
 

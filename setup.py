@@ -172,8 +172,7 @@ setup(name="SphericalFunctions",
                   language='c++',
                   swig_opts=swig_opts,
                   extra_link_args=['-fPIC'],
-                  # extra_link_args=['-lgomp', '-fPIC', '-Wl,-undefined,error'], # `-undefined,error` tells the linker to fail on undefined symbols
-                  extra_compile_args=['-Wno-deprecated', '-ffast-math', GSLDef],
+                  extra_compile_args=['-Wno-deprecated', '-ffast-math', '-O3', GSLDef],
                   # extra_compile_args=['-fopenmp']
               ),
       ],
