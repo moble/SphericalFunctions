@@ -44,36 +44,43 @@
   #include <csignal>
   #ifdef __APPLE__
     #include <xmmintrin.h>
+    int fegetexcept() { return _mm_getcsr(); }
   #else
     #include <fenv.h>     // For feenableexcept. Doesn't seem to be a <cfenv>
     #ifndef __USE_GNU
       extern "C" int feenableexcept (int EXCEPTS);
     #endif
   #endif
-  static sigjmp_buf SphericalFunctions_FloatingPointExceptionJumpBuffer;
-  static sigjmp_buf SphericalFunctions_InterruptExceptionJumpBuffer;
-  void SphericalFunctions_FloatingPointExceptionHandler(int sig) {
-    siglongjmp(SphericalFunctions_FloatingPointExceptionJumpBuffer, sig);
-  }
-  void SphericalFunctions_InterruptExceptionHandler(int sig) {
-    siglongjmp(SphericalFunctions_InterruptExceptionJumpBuffer, sig);
-  }
   namespace SphericalFunctions {
-    // This function enables termination on FPE's
-    bool _RaiseFloatingPointException() {
-      signal(SIGFPE, SphericalFunctions_FloatingPointExceptionHandler);
-      signal(SIGINT, SphericalFunctions_InterruptExceptionHandler);
-      #ifdef __APPLE__
-      _mm_setcsr( _MM_MASK_MASK &~
-                  (_MM_MASK_OVERFLOW|_MM_MASK_INVALID|_MM_MASK_DIV_ZERO));
-      #else
-      feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
-      #endif
-      return true;
+    static sigjmp_buf FloatingPointExceptionJumpBuffer;
+    void FloatingPointExceptionHandler(int sig) {
+      siglongjmp(FloatingPointExceptionJumpBuffer, sig);
     }
-    // Ensure RaiseFloatingPointException() is not optimized away by
-    // using its output to define a global variable.
-    bool RaiseFPE = _RaiseFloatingPointException();
+    class ExceptionHandlerSwitcher {
+    private:
+      int OriginalExceptionFlags;
+      void (*OriginalFloatingPointExceptionHandler)(int);
+    public:
+      ExceptionHandlerSwitcher()
+        : OriginalExceptionFlags(fegetexcept()),
+          OriginalFloatingPointExceptionHandler(signal(SIGFPE, FloatingPointExceptionHandler))
+      {
+        #ifdef __APPLE__
+          _mm_setcsr( _MM_MASK_MASK &~
+                     (_MM_MASK_OVERFLOW|_MM_MASK_INVALID|_MM_MASK_DIV_ZERO));
+        #else
+          feenableexcept(FE_INVALID | FE_DIVBYZERO | FE_OVERFLOW);
+        #endif
+      }
+      ~ExceptionHandlerSwitcher() {
+        #ifdef __APPLE__
+          _mm_setcsr(OriginalExceptionFlags);
+        #else
+          feenableexcept(OriginalExceptionFlags);
+        #endif
+        signal(SIGFPE, OriginalFloatingPointExceptionHandler);
+      }
+    };
   }
 
   const char* const SphericalFunctionsErrors[] = {
@@ -128,28 +135,22 @@
 // It's a good idea to try to keep this part brief, just to cut down
 // the size of the wrapper file.
 %exception {
-  if (!sigsetjmp(SphericalFunctions_FloatingPointExceptionJumpBuffer, 1)) {
-    if(!sigsetjmp(SphericalFunctions_InterruptExceptionJumpBuffer, 1)) {
-      try {
-        $action;
-      } catch(int i) {
-        std::stringstream s;
-        if(i>-1 && i<SphericalFunctionsNumberOfErrors) { s << "SphericalFunctions:: $fulldecl: Exception: " << SphericalFunctionsErrors[i]; }
-        else  { s << "SphericalFunctions:: $fulldecl: Unknown exception number {" << i << "}"; }
-        PyErr_SetString(SphericalFunctionsExceptions[i], s.str().c_str());
-        return 0; // NULL;
-      } catch(...) {
-        std::stringstream s;
-        s << "SphericalFunctions:: $fulldecl: Unknown exception; default handler";
-        PyErr_SetString(PyExc_RuntimeError, s.str().c_str());
-        return 0;
-      }
-    } else {
-      PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions:: $fulldecl: Caught a manual interrupt from the c++ code.");
+  if (!sigsetjmp(SphericalFunctions::FloatingPointExceptionJumpBuffer, 1)) {
+    try {
+      const SphericalFunctions::ExceptionHandlerSwitcher Switcher;
+      $action;
+    } catch(int i) {
+      std::stringstream s;
+      if(i>-1 && i<SphericalFunctionsNumberOfErrors) { s << "$fulldecl: " << SphericalFunctionsErrors[i]; }
+      else  { s << "$fulldecl: Unknown exception number {" << i << "}"; }
+      PyErr_SetString(SphericalFunctionsExceptions[i], s.str().c_str());
+      return 0;
+    } catch(...) {
+      PyErr_SetString(PyExc_RuntimeError, "$fulldecl: Unknown exception; default handler");
       return 0;
     }
   } else {
-    PyErr_SetString(PyExc_RuntimeError, "SphericalFunctions:: $fulldecl: Caught a floating-point exception from the c++ code.");
+    PyErr_SetString(PyExc_RuntimeError, "$fulldecl: Caught a floating-point exception in the c++ code.");
     return 0;
   }
 }
