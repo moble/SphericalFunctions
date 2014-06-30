@@ -2,6 +2,7 @@
 // See LICENSE file for details
 
 #include "WignerDMatrices.hpp"
+#include <iostream>
 #include <cmath>
 #include <cfloat>
 
@@ -14,6 +15,9 @@ using std::complex;
 using std::cerr;
 using std::endl;
 
+#define INFOTOCERR std::cerr << __FILE__ << ":" << __LINE__ << ":" << __func__ << ": "
+
+
 const WignerCoefficientSingleton* WignerCoefficientSingleton::WignerCoefficientInstance = NULL;
 
 
@@ -22,8 +26,10 @@ WignerDMatrix::WignerDMatrix(const Quaternion& R)
   : BinomialCoefficient(BinomialCoefficientSingleton::Instance()),
     WignerCoefficient(WignerCoefficientSingleton::Instance()),
     Ra(R[0], R[3]), Rb(R[2], R[1]),
-    absRa(abs(Ra)), absRb(abs(Rb)), absRRatioSquared(absRb*absRb/(absRa*absRa)),
-    intlog10absRa(std::log10(absRa)), intlog10absRb(std::log10(absRb))
+    absRa(abs(Ra)), absRb(abs(Rb)),
+    absRRatioSquared(absRa>epsilon ? absRb*absRb/(absRa*absRa) : 0.0),
+    intlog10absRa(absRa>epsilon ? std::log10(absRa) : DBL_MIN_10_EXP),
+    intlog10absRb(absRb>epsilon ? std::log10(absRb) : DBL_MIN_10_EXP)
 { }
 
 /// Reset the rotor for this object to the given value.
@@ -32,9 +38,9 @@ WignerDMatrix& WignerDMatrix::SetRotation(const Quaternion& R) {
   Rb = std::complex<double>(R[2], R[1]);
   absRa = abs(Ra);
   absRb = abs(Rb);
-  absRRatioSquared = absRb*absRb/(absRa*absRa);
-  intlog10absRa = std::log10(absRa);
-  intlog10absRb = std::log10(absRb);
+  absRRatioSquared = absRa>epsilon ? absRb*absRb/(absRa*absRa) : 0.0;
+  intlog10absRa = absRa>epsilon ? std::log10(absRa) : DBL_MIN_10_EXP;
+  intlog10absRb = absRb>epsilon ? std::log10(absRb) : DBL_MIN_10_EXP;
   return *this;
 }
 
