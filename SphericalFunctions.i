@@ -137,7 +137,7 @@
 %exception {
   if (!sigsetjmp(SphericalFunctions::FloatingPointExceptionJumpBuffer, 1)) {
     try {
-      const SphericalFunctions::ExceptionHandlerSwitcher Switcher;
+      // const SphericalFunctions::ExceptionHandlerSwitcher Switcher;
       $action;
     } catch(int i) {
       std::stringstream s;
