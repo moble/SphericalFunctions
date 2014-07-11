@@ -81,10 +81,10 @@ namespace SphericalFunctions {
     }
     inline double operator()(const unsigned int n, const unsigned int k) const {
       #ifdef DEBUG
-      if(n>2*ellMax_Utilities || k>n) {
-        std::cerr << "\n\n(n, k) = (" << n << ", " << k << ")\t2*ellMax_Utilities = " << 2*ellMax_Utilities
-                  << "\nBinomialCoefficientFunctor is only implemented up to n=2*ellMax_Utilities=" << 2*ellMax_Utilities
-                  << ".\nTo increase this bound, edit 'ellMax_Utilities' in " << __FILE__ << " and recompile." << std::endl;
+      if(n>2*ellMax || k>n) {
+        std::cerr << "\n\n(n, k) = (" << n << ", " << k << ")\t2*ellMax = " << 2*ellMax
+                  << "\nBinomialCoefficientFunctor is only implemented up to n=2*ellMax=" << 2*ellMax
+                  << ".\nTo increase this bound, edit 'ellMax' in " << __FILE__ << " and recompile." << std::endl;
         throw(IndexOutOfBounds);
       }
       #endif
@@ -122,10 +122,10 @@ namespace SphericalFunctions {
     }
     inline double operator()(const int ell, const int m) const {
       #ifdef DEBUG
-      if(ell>ellMax_Utilities || std::abs(m)>ell) {
-        std::cerr << "\n\n(ell, m) = (" << ell << ", " << m << ")\tellMax_Utilities = " << ellMax_Utilities
-                  << "\nLadderOperatorFactorFunctor is only implemented up to ell=" << ellMax_Utilities
-                  << ".\nTo increase this bound, edit 'ellMax_Utilities' in " << __FILE__ << " and recompile." << std::endl;
+      if(ell>ellMax || std::abs(m)>ell) {
+        std::cerr << "\n\n(ell, m) = (" << ell << ", " << m << ")\tellMax = " << ellMax
+                  << "\nLadderOperatorFactorFunctor is only implemented up to ell=" << ellMax
+                  << ".\nTo increase this bound, edit 'ellMax' in " << __FILE__ << " and recompile." << std::endl;
         throw(IndexOutOfBounds);
       }
       #endif

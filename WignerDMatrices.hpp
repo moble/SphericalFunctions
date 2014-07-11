@@ -45,10 +45,10 @@ namespace SphericalFunctions {
     }
     inline double operator()(const int ell, const int mp, const int m) const {
       #ifdef DEBUG
-      if(ell>ellMax_Utilities || std::abs(mp)>ell || std::abs(m)>ell) {
-        std::cerr << "\n\n(ell, mp, m) = (" << ell << ", " << mp << ", " << m << ")\tellMax_Utilities = " << ellMax_Utilities
-                  << "\nWignerCoefficientSingleton is only implemented up to ell=" << ellMax_Utilities
-                  << ".\nTo increase this bound, edit 'ellMax_Utilities' in " << __FILE__ << " and recompile." << std::endl;
+      if(ell>ellMax || std::abs(mp)>ell || std::abs(m)>ell) {
+        std::cerr << "\n\n(ell, mp, m) = (" << ell << ", " << mp << ", " << m << ")\tellMax = " << ellMax
+                  << "\nWignerCoefficientSingleton is only implemented up to ell=" << ellMax
+                  << ".\nTo increase this bound, edit 'ellMax' in " << __FILE__ << " and recompile." << std::endl;
         throw(IndexOutOfBounds);
       }
       #endif
@@ -58,6 +58,13 @@ namespace SphericalFunctions {
 
   /// Object for computing the Wigner D matrices as functions of quaternion rotors
   class WignerDMatrix {
+    /// Note that this object is a functor.  The rotation should be
+    /// set, and then components can be taken by calling the object
+    /// with arguments (ell,mp,m).  The rotation can then be set to
+    /// another value, and the process repeated.  Evaluation in this
+    /// order is more efficient than the other way around.
+  public:
+    bool ErrorOnBadIndices;
   private:
     const BinomialCoefficientSingleton& BinomialCoefficient;
     const WignerCoefficientSingleton& WignerCoefficient;
@@ -67,6 +74,7 @@ namespace SphericalFunctions {
   public:
     WignerDMatrix(const Quaternions::Quaternion& iR=Quaternions::Quaternion(1,0,0,0));
     WignerDMatrix& SetRotation(const Quaternions::Quaternion& iR);
+    WignerDMatrix& SetRotation(const double alpha, const double beta, const double gamma) { SetRotation(Quaternions::Quaternion(alpha, beta, gamma)); return *this; }
     std::complex<double> operator()(const int ell, const int mp, const int m) const;
   };
 

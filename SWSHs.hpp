@@ -27,6 +27,7 @@ namespace SphericalFunctions {
       : D(iR), spin(s), sign(s%2==0 ? 1.0 : -1.0)
     { }
     // / \endcond
+    void RaiseErrorOnBadIndices(const bool ErrorOnBadIndices=true) { D.ErrorOnBadIndices = ErrorOnBadIndices; }
     inline SWSH& SetRotation(const Quaternions::Quaternion& iR) { D.SetRotation(iR); return *this; }
     inline SWSH& SetAngles(const double vartheta, const double varphi) { D.SetRotation(Quaternions::Quaternion(vartheta, varphi)); return *this; }
     inline std::complex<double> operator()(const int ell, const int m) const {

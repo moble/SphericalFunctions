@@ -23,7 +23,8 @@ const WignerCoefficientSingleton* WignerCoefficientSingleton::WignerCoefficientI
 
 /// Construct the D matrix object given the (optional) rotor.
 WignerDMatrix::WignerDMatrix(const Quaternion& R)
-  : BinomialCoefficient(BinomialCoefficientSingleton::Instance()),
+  : ErrorOnBadIndices(true),
+    BinomialCoefficient(BinomialCoefficientSingleton::Instance()),
     WignerCoefficient(WignerCoefficientSingleton::Instance()),
     Ra(R[0], R[3]), Rb(R[2], R[1]),
     absRa(abs(Ra)), absRb(abs(Rb)),
@@ -49,6 +50,16 @@ std::complex<double> WignerDMatrix::operator()(const int ell, const int mp, cons
   // If either sub-rotor, when raised to the exponent (mp-m), and
   // multiplied by anything within machine precision of 1, is not
   // representable as a floating-point number, just treat it as zero.
+  if(std::abs(mp)>ell || std::abs(m)>ell) {
+    if(ErrorOnBadIndices) {
+      INFOTOCERR << "(" << ell << ", " << mp << ", " << m << ") is not a valid set of indices.\n"
+                 << "If you want this object (let's call it `D`) to return 0.0 when invalid\n"
+                 << " indices are requested, you can set `D.ErrorOnBadIndices = false`.\n" << std::endl;
+      throw(ValueError);
+    } else {
+      return std::complex<double>(0.0, 0.0);
+    }
+  }
   if(absRa < epsilon || 2*intlog10absRa*(mp-m)<DBL_MIN_10_EXP+17) {
     return (mp!=-m ? 0.0 : ((ell+mp)%2==0 ? 1.0 : -1.0) * std::pow(Rb, 2*m) );
   }

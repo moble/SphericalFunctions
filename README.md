@@ -58,7 +58,8 @@ If the build succeeds, just open an python session and type
 
     import SphericalHarmonics
 
-In ipython, you can then see your options using tab completion by typing
+In *ipython* (not just ordinary python), you can then see your options
+using tab completion by typing
 
     SphericalHarmonics.
 

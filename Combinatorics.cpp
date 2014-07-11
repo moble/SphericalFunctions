@@ -22,10 +22,6 @@ const LadderOperatorFactorSingleton* LadderOperatorFactorSingleton::LadderOperat
 double SphericalFunctions::Wigner3j(int j_1, int j_2, int j_3, int m_1, int m_2, int m_3) {
   /// This function is just a translation of the function in
   /// `sympy.physics.wigner`, written by Jens Rasch.
-  ///
-  /// Note that the input parameters are assumed to be valid inputs.
-  /// For example, you will get nonsense if j_3 > j_1+j_2 or
-  /// m_1+m_2+m_3!=0.
   #ifdef DEBUG
   if(int(j_1 * 2) != j_1 * 2 || int(j_2 * 2) != j_2 * 2 || int(j_3 * 2) != j_3 * 2) {
     INFOTOCERR << "\n\n(j_1,j_2,j_3,m_1,m_2,m_3) = (" << j_1 << ","  << j_2 << ","  << j_3 << "," << m_1 << "," << m_2 << "," << m_3
