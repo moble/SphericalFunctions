@@ -3,6 +3,7 @@
 
 #include "WignerDMatrices.hpp"
 #include <iostream>
+#include <cstdlib>
 #include <cmath>
 #include <cfloat>
 

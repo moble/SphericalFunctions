@@ -4,6 +4,7 @@
 #include "Combinatorics.hpp"
 #include <iostream>
 #include <complex>
+#include <cstdlib>
 #include <cmath>
 #include "Errors.hpp"
 
