@@ -42,9 +42,23 @@ namespace SphericalFunctions {
       return *FactorialInstance;
     }
     inline double operator[](const unsigned int i) const {
+      #ifdef DEBUG
+      if(i>170) {
+        std::cerr << "\n\ni = " << i
+                  << "\nIn factorials, 170 is the largest `double` that does not overflow." << std::endl;
+        throw(IndexOutOfBounds);
+      }
+      #endif
       return FactorialTable[i];
     }
     inline double operator()(const unsigned int i) const {
+      #ifdef DEBUG
+      if(i>170) {
+        std::cerr << "\n\ni = " << i
+                  << "\nIn factorials, 170 is the largest `double` that does not overflow." << std::endl;
+        throw(IndexOutOfBounds);
+      }
+      #endif
       return FactorialTable[i];
     }
   }; // class FactorialSingleton
